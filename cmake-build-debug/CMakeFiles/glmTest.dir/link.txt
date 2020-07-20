@@ -1,0 +1,1 @@
+/usr/bin/c++  -g   CMakeFiles/glmTest.dir/glmTest.cpp.o  -o glmTest 

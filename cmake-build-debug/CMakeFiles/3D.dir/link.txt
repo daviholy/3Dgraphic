@@ -1,0 +1,1 @@
+/usr/bin/c++  -g  -ldl -pthread CMakeFiles/3D.dir/3D.cpp.o CMakeFiles/3D.dir/glad.c.o CMakeFiles/3D.dir/Shader.cpp.o CMakeFiles/3D.dir/Texture.cpp.o  -o 3D  ../dependencies/glfw3.a 

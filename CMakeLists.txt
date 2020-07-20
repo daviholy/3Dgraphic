@@ -1,0 +1,15 @@
+cmake_minimum_required(VERSION 3.14)
+project(glfwTest)
+
+set(CMAKE_CXX_STANDARD 14)
+include_directories(dependencies)
+unset(GLFW_LIBRARY CACHE)
+find_library(GLFW_LIBRARY
+        NAMES glfw3.a
+        PATHS  dependencies)
+#add_executable(2D 2D.cpp glad.c Shader.cpp Texture.cpp)
+add_executable(glmTest glmTest.cpp)
+add_executable(3D 3D.cpp glad.c Shader.cpp Texture.cpp )
+target_link_options(3D PRIVATE -ldl -pthread)
+#target_link_libraries(2D ${GLFW_LIBRARY} )
+target_link_libraries(3D ${GLFW_LIBRARY} )
