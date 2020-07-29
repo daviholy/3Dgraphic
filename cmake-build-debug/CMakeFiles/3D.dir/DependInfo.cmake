@@ -15,6 +15,7 @@ set(CMAKE_C_TARGET_INCLUDE_PATH
   )
 set(CMAKE_DEPENDS_CHECK_CXX
   "/home/david/CLionProjects/glfwTest/3D.cpp" "/home/david/CLionProjects/glfwTest/cmake-build-debug/CMakeFiles/3D.dir/3D.cpp.o"
+  "/home/david/CLionProjects/glfwTest/Camera.cpp" "/home/david/CLionProjects/glfwTest/cmake-build-debug/CMakeFiles/3D.dir/Camera.cpp.o"
   "/home/david/CLionProjects/glfwTest/Shader.cpp" "/home/david/CLionProjects/glfwTest/cmake-build-debug/CMakeFiles/3D.dir/Shader.cpp.o"
   "/home/david/CLionProjects/glfwTest/Texture.cpp" "/home/david/CLionProjects/glfwTest/cmake-build-debug/CMakeFiles/3D.dir/Texture.cpp.o"
   )

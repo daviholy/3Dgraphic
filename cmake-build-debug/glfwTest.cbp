@@ -133,6 +133,15 @@
 		<Unit filename="/home/david/CLionProjects/glfwTest/3D.cpp">
 			<Option target="3D"/>
 		</Unit>
+		<Unit filename="/home/david/CLionProjects/glfwTest/Camera.cpp">
+			<Option target="3D"/>
+		</Unit>
+		<Unit filename="/home/david/CLionProjects/glfwTest/Camera.h">
+			<Option target="3D"/>
+		</Unit>
+		<Unit filename="/home/david/CLionProjects/glfwTest/Constants.h">
+			<Option target="3D"/>
+		</Unit>
 		<Unit filename="/home/david/CLionProjects/glfwTest/Shader.cpp">
 			<Option target="3D"/>
 		</Unit>

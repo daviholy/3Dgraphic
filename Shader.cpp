@@ -78,7 +78,6 @@ glDeleteShader(fragment);
 void Shader::use() {
     glUseProgram(ID);
 }
-
 void Shader::setBool(const std::string &name, bool value) const
 {
     GLuint uniformLoc;
@@ -117,5 +116,16 @@ void Shader::setMatrix(const std::string &name, const GLfloat *value) const {
         std::cout << "can't find uniform " << name << std::endl;
         return;
     }
-    glad_glUniformMatrix4fv(uniformLoc,1,GL_FALSE,value);
+    glUniformMatrix4fv(uniformLoc,1,GL_FALSE,value);
 }
+
+void Shader::setVec3(const std::string &name, float value1, float value2, float value3) const {
+    GLuint uniformLoc;
+    uniformLoc =glGetUniformLocation(ID,name.c_str());
+    if (uniformLoc == -1) {
+        std::cout << "can't find uniform " << name << std::endl;
+        return;
+    }
+    glUniform3f(uniformLoc,value1,value2,value3);
+}
+

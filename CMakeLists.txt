@@ -9,7 +9,7 @@ find_library(GLFW_LIBRARY
         PATHS  dependencies)
 #add_executable(2D 2D.cpp glad.c Shader.cpp Texture.cpp)
 add_executable(glmTest glmTest.cpp)
-add_executable(3D 3D.cpp glad.c Shader.cpp Texture.cpp )
+add_executable(3D 3D.cpp glad.c Shader.cpp Texture.cpp Camera.cpp Camera.h Constants.h)
 target_link_options(3D PRIVATE -ldl -pthread)
 #target_link_libraries(2D ${GLFW_LIBRARY} )
 target_link_libraries(3D ${GLFW_LIBRARY} )

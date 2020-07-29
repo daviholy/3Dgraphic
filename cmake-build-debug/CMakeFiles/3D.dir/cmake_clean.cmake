@@ -2,6 +2,7 @@ file(REMOVE_RECURSE
   "3D"
   "3D.pdb"
   "CMakeFiles/3D.dir/3D.cpp.o"
+  "CMakeFiles/3D.dir/Camera.cpp.o"
   "CMakeFiles/3D.dir/Shader.cpp.o"
   "CMakeFiles/3D.dir/Texture.cpp.o"
   "CMakeFiles/3D.dir/glad.c.o"

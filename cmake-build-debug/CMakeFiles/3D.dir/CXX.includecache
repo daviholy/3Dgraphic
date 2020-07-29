@@ -1471,12 +1471,16 @@ GLFW/glfw3.h
 -
 thread
 -
-list
+math.h
 -
-vector
+list
 -
 Shader.h
 /home/david/CLionProjects/glfwTest/Shader.h
+Constants.h
+/home/david/CLionProjects/glfwTest/Constants.h
+Camera.h
+/home/david/CLionProjects/glfwTest/Camera.h
 iostream
 -
 Texture.h
@@ -1491,6 +1495,12 @@ random
 -
 fstream
 -
+
+/home/david/CLionProjects/glfwTest/Camera.h
+glm/glm.hpp
+-
+
+/home/david/CLionProjects/glfwTest/Constants.h
 
 /home/david/CLionProjects/glfwTest/Shader.h
 glad/glad.h

@@ -6,7 +6,8 @@ out vec2 TexCoord;
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
-
+uniform sampler2D Texture0;
+uniform sampler2D Texture1;
 void main(){
     gl_Position = projection * view * model * vec4(vertex_pos,1.0f);
     TexCoord = vertex_texCoord;

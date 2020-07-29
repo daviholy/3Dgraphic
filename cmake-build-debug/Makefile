@@ -163,6 +163,33 @@ glmTest/fast:
 	$(MAKE) -f CMakeFiles/3D.dir/build.make CMakeFiles/3D.dir/3D.cpp.s
 .PHONY : 3D.cpp.s
 
+Camera.o: Camera.cpp.o
+
+.PHONY : Camera.o
+
+# target to build an object file
+Camera.cpp.o:
+	$(MAKE) -f CMakeFiles/3D.dir/build.make CMakeFiles/3D.dir/Camera.cpp.o
+.PHONY : Camera.cpp.o
+
+Camera.i: Camera.cpp.i
+
+.PHONY : Camera.i
+
+# target to preprocess a source file
+Camera.cpp.i:
+	$(MAKE) -f CMakeFiles/3D.dir/build.make CMakeFiles/3D.dir/Camera.cpp.i
+.PHONY : Camera.cpp.i
+
+Camera.s: Camera.cpp.s
+
+.PHONY : Camera.s
+
+# target to generate assembly for a file
+Camera.cpp.s:
+	$(MAKE) -f CMakeFiles/3D.dir/build.make CMakeFiles/3D.dir/Camera.cpp.s
+.PHONY : Camera.cpp.s
+
 Shader.o: Shader.cpp.o
 
 .PHONY : Shader.o
@@ -284,6 +311,9 @@ help:
 	@echo "... 3D.o"
 	@echo "... 3D.i"
 	@echo "... 3D.s"
+	@echo "... Camera.o"
+	@echo "... Camera.i"
+	@echo "... Camera.s"
 	@echo "... Shader.o"
 	@echo "... Shader.i"
 	@echo "... Shader.s"
