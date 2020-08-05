@@ -12,7 +12,7 @@ Camera::Camera(float yaw, float pitch, glm::vec3 position, glm::vec3 up) {
     Yaw = yaw;
     Pitch = pitch;
     Position = position;
-    WorldUp = up;
+    _WorldUp = up;
     UpdateCameraVectors();
 }
 void Camera::UpdateCameraVectors() {
@@ -20,13 +20,13 @@ void Camera::UpdateCameraVectors() {
     front.x = cos(glm::radians(Yaw)) * cos (glm::radians(Pitch));
     front.y = sin (glm::radians(Pitch));
     front.z = sin (glm::radians(Yaw)) * cos (glm::radians(Pitch));
-    Front = glm::normalize(front);
+    _Front = glm::normalize(front);
 
-    Right = glm::normalize(glm::cross(Front,WorldUp));
-    Up = glm::normalize(glm::cross(Right,Front));
+    _Right = glm::normalize(glm::cross(_Front, _WorldUp));
+    _Up = glm::normalize(glm::cross(_Right, _Front));
 }
  glm::mat4 Camera::GetViewMatrix() {
-   return glm::lookAt(Position,Position + Front, Up);
+   return glm::lookAt(Position, Position + _Front, _Up);
 }
 
 void Camera::ProccesMouseMovement (float xPos, float yPos){
@@ -49,15 +49,15 @@ void Camera::ProccesCameraMovement(CameraMovement movement, float deltatime) {
     float velocity = CAMERA_SPEED * deltatime;
     switch (movement) {
         case Forward:
-            Position += Front * velocity;
+            Position += _Front * velocity;
             break;
         case Backward:
-            Position -= Front * velocity;
+            Position -= _Front * velocity;
             break;
         case Left:
-            Position -= Right * velocity;
+            Position -= _Right * velocity;
             break;
         case RightMovement:
-            Position += Right * velocity;
+            Position += _Right * velocity;
     }
 }

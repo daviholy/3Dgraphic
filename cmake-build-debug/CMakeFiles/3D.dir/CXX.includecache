@@ -668,6 +668,8 @@ matrix_projection.inl
 matrix_transform.inl
 ../dependencies/glm/ext/matrix_transform.inl
 
+../dependencies/glm/ext/matrix_transform.inl
+
 ../dependencies/glm/ext/quaternion_common.hpp
 ../ext/scalar_constants.hpp
 ../dependencies/glm/ext/scalar_constants.hpp
@@ -1495,6 +1497,16 @@ random
 -
 fstream
 -
+
+/home/david/CLionProjects/glfwTest/Camera.cpp
+glm/ext/matrix_transform.hpp
+-
+Camera.h
+/home/david/CLionProjects/glfwTest/Camera.h
+glm/glm.hpp
+/home/david/CLionProjects/glfwTest/glm/glm.hpp
+Constants.h
+/home/david/CLionProjects/glfwTest/Constants.h
 
 /home/david/CLionProjects/glfwTest/Camera.h
 glm/glm.hpp

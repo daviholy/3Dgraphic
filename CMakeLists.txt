@@ -1,11 +1,16 @@
 cmake_minimum_required(VERSION 3.14)
 project(glfwTest)
-
+set(prefix "")
+if(${CMAKE_HOST_UNIX})
+    set(prefix ".a")
+elseif(CMAKE_HOST_WIN32)
+    set (prefix ".lib")
+endif()
 set(CMAKE_CXX_STANDARD 14)
 include_directories(dependencies)
 unset(GLFW_LIBRARY CACHE)
 find_library(GLFW_LIBRARY
-        NAMES glfw3.a
+        NAMES "glfw3${prefix}"
         PATHS  dependencies)
 #add_executable(2D 2D.cpp glad.c Shader.cpp Texture.cpp)
 add_executable(glmTest glmTest.cpp)

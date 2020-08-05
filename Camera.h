@@ -16,10 +16,10 @@ class Camera {
 public:
     glm::vec3 Position;
 private:
-    glm::vec3 Front;
-    glm::vec3 Up;
-    glm::vec3 Right;
-    glm::vec3 WorldUp;
+    glm::vec3 _Front;
+    glm::vec3 _Up;
+    glm::vec3 _Right;
+    glm::vec3 _WorldUp;
 
     float Pitch,Yaw,lastX,lastY;
 public:

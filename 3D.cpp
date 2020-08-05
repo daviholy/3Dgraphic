@@ -246,12 +246,12 @@ catch (std::ifstream::failure& fail) {
     lightningShader.setVec3("material.ambient",0.78431f,0.549,0.2745f);
     lightningShader.setVec3("material.diffuse",0.78431f,0.549f,0.2745f);
     lightningShader.setVec3("material.specular",0.78431f,0.6666f,0.2352f);
-    lightningShader.setFloat("material.shininess", 1.0f);
+    lightningShader.setFloat("material.shininess", 32.0f);
     lightningShader.setVec3("light.position",lightPos.x,lightPos.y,lightPos.z);
     lightningShader.setVec3("light.color",1.0f,1.0f,1.0f);
-    lightningShader.setVec3("light.ambient",0.4f,0.4f,0.4f);
+    lightningShader.setVec3("light.ambient",0.1f,0.1f,0.1f);
     lightningShader.setVec3("light.diffuse",0.5f,0.5f,0.5f);
-    lightningShader.setVec3("light.specular",1.0f,1.0f,1.0f);
+    lightningShader.setVec3("light.specular",0.6f,0.6f,0.6f);
     lightningShader.setInt("Texture0", 0);
     //--------
     glfwSwapInterval(1);
