@@ -11,10 +11,8 @@
 #include "Camera.h"
 #include <iostream>
 #include "Texture.h"
-#include "glm/glm.hpp"
 #include"glm/gtc/matrix_transform.hpp"
 #include <glm/gtc/type_ptr.hpp>
-#include <random>
 #include <fstream>
 
 //headers of functions used in the file
@@ -29,7 +27,7 @@ void drawCubeLights();
 //--------------------------------------
 Shader  lightingshader, LampShader;
 float deltaTime = 0.0;
-GLuint VBO, VAO, LightVAO, textures[2];
+GLuint VBO, LightVAO, textures[2];
 float deqree = 0;
 float FOV = 45;
 Camera camera = Camera(-90, -36, glm::vec3(0.0, 4.0, 3.5));
@@ -284,7 +282,7 @@ int main() {
     textureShader.setInt("Texture1", 1);
     textureShader.setFloat("Transparency", 0.3);*/
     lightingshader.use();
-    lightingshader.setVec3("material.ambient", 0.78431f, 0.549, 0.2745f);
+    lightingshader.setVec3("material.ambient", 0.78431f, 0.549f, 0.2745f);
     lightingshader.setVec3("material.diffuse", 0.78431f, 0.549f, 0.2745f);
     lightingshader.setVec3("material.specular", 0.78431f, 0.6666f, 0.2352f);
     lightingshader.setFloat("material.shininess", 32.0f);
@@ -328,7 +326,7 @@ int main() {
     while (!glfwWindowShouldClose(window)) {
         // calculate time logic
         //--------------------
-        float currentFrame = glfwGetTime();
+        double currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
             const float radius = 5;
