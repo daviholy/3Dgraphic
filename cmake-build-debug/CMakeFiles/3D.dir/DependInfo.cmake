@@ -1,25 +1,15 @@
 # The set of languages for which implicit dependencies are needed:
 set(CMAKE_DEPENDS_LANGUAGES
-  "C"
   "CXX"
   )
 # The set of files for implicit dependencies of each language:
-set(CMAKE_DEPENDS_CHECK_C
-  "/home/david/CLionProjects/glfwTest/glad.c" "/home/david/CLionProjects/glfwTest/cmake-build-debug/CMakeFiles/3D.dir/glad.c.o"
-  )
-set(CMAKE_C_COMPILER_ID "GNU")
-
-# The include file search paths:
-set(CMAKE_C_TARGET_INCLUDE_PATH
-  "../dependencies"
-  )
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/david/CLionProjects/glfwTest/3D.cpp" "/home/david/CLionProjects/glfwTest/cmake-build-debug/CMakeFiles/3D.dir/3D.cpp.o"
-  "/home/david/CLionProjects/glfwTest/Camera.cpp" "/home/david/CLionProjects/glfwTest/cmake-build-debug/CMakeFiles/3D.dir/Camera.cpp.o"
-  "/home/david/CLionProjects/glfwTest/Shader.cpp" "/home/david/CLionProjects/glfwTest/cmake-build-debug/CMakeFiles/3D.dir/Shader.cpp.o"
-  "/home/david/CLionProjects/glfwTest/Texture.cpp" "/home/david/CLionProjects/glfwTest/cmake-build-debug/CMakeFiles/3D.dir/Texture.cpp.o"
+  "C:/Users/davih/CLionProjects/3Dgraphic/3D.cpp" "C:/Users/davih/CLionProjects/3Dgraphic/cmake-build-debug/CMakeFiles/3D.dir/3D.cpp.obj"
+  "C:/Users/davih/CLionProjects/3Dgraphic/Camera.cpp" "C:/Users/davih/CLionProjects/3Dgraphic/cmake-build-debug/CMakeFiles/3D.dir/Camera.cpp.obj"
+  "C:/Users/davih/CLionProjects/3Dgraphic/Shader.cpp" "C:/Users/davih/CLionProjects/3Dgraphic/cmake-build-debug/CMakeFiles/3D.dir/Shader.cpp.obj"
+  "C:/Users/davih/CLionProjects/3Dgraphic/Texture.cpp" "C:/Users/davih/CLionProjects/3Dgraphic/cmake-build-debug/CMakeFiles/3D.dir/Texture.cpp.obj"
   )
-set(CMAKE_CXX_COMPILER_ID "GNU")
+set(CMAKE_CXX_COMPILER_ID "MSVC")
 
 # The include file search paths:
 set(CMAKE_CXX_TARGET_INCLUDE_PATH

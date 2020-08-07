@@ -6,13 +6,12 @@
 #include "Camera.h"
 #include "glm/glm.hpp"
 #include "Constants.h"
-Camera::Camera(float yaw, float pitch, glm::vec3 position, glm::vec3 up) {
-    lastX = SCR_WIDTH/2.0;
-    lastY = SCR_HEIGHT/2.0;
+#include <GLFW/glfw3.h>
+Camera::Camera(const float yaw, const float pitch, const glm::vec3 position, const glm::vec3 up) {
     Yaw = yaw;
     Pitch = pitch;
     Position = position;
-    _WorldUp = up;
+    WorldUp = up;
     UpdateCameraVectors();
 }
 void Camera::UpdateCameraVectors() {
@@ -20,17 +19,21 @@ void Camera::UpdateCameraVectors() {
     front.x = cos(glm::radians(Yaw)) * cos (glm::radians(Pitch));
     front.y = sin (glm::radians(Pitch));
     front.z = sin (glm::radians(Yaw)) * cos (glm::radians(Pitch));
-    _Front = glm::normalize(front);
+    Front = glm::normalize(front);
 
-    _Right = glm::normalize(glm::cross(_Front, _WorldUp));
-    _Up = glm::normalize(glm::cross(_Right, _Front));
+    Right = glm::normalize(glm::cross(Front, WorldUp));
+    Up = glm::normalize(glm::cross(Right, Front));
 }
- glm::mat4 Camera::GetViewMatrix() {
-   return glm::lookAt(Position, Position + _Front, _Up);
+ glm::mat4 Camera::GetViewMatrix() const{
+   return glm::lookAt(Position, Position + Front, Up);
 }
 
-void Camera::ProccesMouseMovement (float xPos, float yPos){
-
+void Camera::ProccesMouseMovement (const float xPos, const float yPos) {
+    if (firstMouseMove){
+        lastX =xPos;
+        lastY = yPos;
+        firstMouseMove = false;
+    }
     float xOffset = xPos - lastX;
     float yOffset = yPos - lastY;
     lastX = xPos;
@@ -45,19 +48,19 @@ void Camera::ProccesMouseMovement (float xPos, float yPos){
     UpdateCameraVectors();
 }
 
-void Camera::ProccesCameraMovement(CameraMovement movement, float deltatime) {
+void Camera::ProccesCameraMovement(const CameraMovement movement, const float deltatime) {
     float velocity = CAMERA_SPEED * deltatime;
     switch (movement) {
         case Forward:
-            Position += _Front * velocity;
+            Position += Front * velocity;
             break;
         case Backward:
-            Position -= _Front * velocity;
+            Position -= Front * velocity;
             break;
         case Left:
-            Position -= _Right * velocity;
+            Position -= Right * velocity;
             break;
         case RightMovement:
-            Position += _Right * velocity;
+            Position += Right * velocity;
     }
 }

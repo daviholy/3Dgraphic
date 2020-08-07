@@ -1,6 +1,8 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/glmTest.dir/glmTest.cpp.o"
-  "glmTest"
+  "CMakeFiles/glmTest.dir/glmTest.cpp.obj"
+  "glmTest.exe"
+  "glmTest.exe.manifest"
+  "glmTest.lib"
   "glmTest.pdb"
 )
 
