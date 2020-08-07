@@ -1,7 +1,7 @@
 //
 // Created by davih on 27.04.2020.
 //
-#include <glad/glad.h>
+#include <glad/glad.h>K
 #include <GLFW/glfw3.h>
 #include <thread>
 #include <cmath>
