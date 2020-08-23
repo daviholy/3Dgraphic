@@ -419,13 +419,13 @@ void processInput(GLFWwindow *window) {
         deqree -= 1;
         std::cout << "Degree: " << deqree << std::endl;
     }*/
-    if (glfwGetKey(window, GLFW_KEY_KP_7)) {
+   /* if (glfwGetKey(window, GLFW_KEY_KP_7)) {
         FOV -= 1;
         std::cout << "FOV: " << FOV << std::endl;
     } else if (glfwGetKey(window, GLFW_KEY_KP_8)) {
         FOV += 1;
         std::cout << "FOV: " << FOV << std::endl;
-    }
+    }*/
     if (glfwGetKey(window, GLFW_KEY_ESCAPE)) {
         //closing window
         glfwSetWindowShouldClose(window, GLFW_TRUE);
