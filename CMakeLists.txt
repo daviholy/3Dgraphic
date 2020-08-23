@@ -12,9 +12,16 @@ unset(GLFW_LIBRARY CACHE)
 find_library(GLFW_LIBRARY
         NAMES "glfw3${prefix}"
         PATHS  dependencies)
-#add_executable(2D 2D.cpp glad.c Shader.cpp Texture.cpp)
+
 set(glad "dependencies/glad/glad.c")
-add_executable(3D 3D.cpp  Shader.cpp Texture.cpp Camera.cpp ${glad})
+set (ImGui
+     dependencies/imgui/imgui.cpp
+     dependencies/imgui/imgui_demo.cpp
+     dependencies/imgui/imgui_draw.cpp
+        dependencies/imgui/imgui_impl_glfw.cpp
+        dependencies/imgui/imgui_impl_opengl3.cpp
+        dependencies/imgui/imgui_widgets.cpp)
+add_executable(3D 3D.cpp  Shader.cpp Texture.cpp Camera.cpp ${glad} ${ImGui})
 target_link_options(3D PRIVATE -ldl -pthread)
 #target_link_libraries(2D ${GLFW_LIBRARY} )
 target_link_libraries(3D ${GLFW_LIBRARY} )

@@ -115,7 +115,7 @@ the lighting is break up into 3 different sources, which we can enable or disabl
 Each phase is calculated in specific function and summed up to the result.
 ========================================================*/
 vec3 texColor = vec3(texture(Texture0, TexCoord));
-vec3 result = vec3(0);
+vec3 result;
 if (dirLightSet)
 result = CalcDirLight(texColor);
 if (pointLightSet)

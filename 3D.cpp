@@ -1,11 +1,12 @@
 //
 // Created by davih on 27.04.2020.
 //
-#include <glad/glad.h>K
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <thread>
 #include <cmath>
 #include <list>
+#include "menu.h"
 #include "Shader.h"
 #include "Constants.h"
 #include "Camera.h"
@@ -15,6 +16,8 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <fstream>
 
+#define UNIQ_ID
+
 //headers of functions used in the file
 //------------------------------------
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
@@ -22,10 +25,12 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void mouse_callback(GLFWwindow *window, double xpos, double ypos);
 
 void processInput(GLFWwindow *window);
+
 void drawCubeLights();
+
 //global variables used across functions
 //--------------------------------------
-Shader  lightingshader, LampShader;
+Shader lightingshader, LampShader;
 float deltaTime = 0.0;
 GLuint VBO, LightVAO, textures[2];
 float deqree = 0;
@@ -33,10 +38,11 @@ float FOV = 45;
 Camera camera = Camera(-90, -36, glm::vec3(0.0, 4.0, 3.5));
 bool RawInput = false;
 glm::vec3 lightPos = glm::vec3(1.2, 0, 2.0);
-bool globalLight = true;
-bool lampLight = true;
-bool flashlight = true;
+
+
 void (*draw)() = drawCubeLights;
+
+bool hideGui = true;
 
 //TODO: implement the object loader system, for loading more complex objects
 /*========================
@@ -103,6 +109,7 @@ glm::vec3 cubePositions[] = {
         glm::vec3(1.5f, 0.2f, -1.5f),
         glm::vec3(-1.3f, 1.0f, -1.5f)
 };
+
 void drawCubeLights() {
     glBindVertexArray(LightVAO);
     glm::mat4 model, projection;
@@ -111,7 +118,7 @@ void drawCubeLights() {
     lightingshader.use();
     lightingshader.setVec3("pointLight.position", lightPos.x, lightPos.y, lightPos.z);
     lightingshader.setVec3("spotLight.direction", camera.Front.x, camera.Front.y, camera.Front.z);
-    lightingshader.setVec3("spotLight.position",camera.Position.x,camera.Position.y,camera.Position.z);
+    lightingshader.setVec3("spotLight.position", camera.Position.x, camera.Position.y, camera.Position.z);
     lightingshader.setVec3("viewPos", camera.Position.x, camera.Position.y, camera.Position.z);
     projection = glm::perspective(glm::radians(FOV), (float) SCR_WIDTH / SCR_HEIGHT, 0.1f, 100.0f);
     lightingshader.setMatrix("view", glm::value_ptr(camera.GetViewMatrix()));
@@ -127,16 +134,18 @@ void drawCubeLights() {
         lightingshader.setMatrix("model", glm::value_ptr(model));
         glDrawArrays(GL_TRIANGLES, 0, 36);
     }
-        // render lamp box
-        //-----------------
-        LampShader.use();
-        LampShader.setMatrix("view", glm::value_ptr(camera.GetViewMatrix()));
-        LampShader.setMatrix("projection", glm::value_ptr(projection));
-        model = glm::translate(glm::mat4(1.0), lightPos);
-        model = glm::scale(model, glm::vec3(0.2f));
-        LampShader.setMatrix("model", glm::value_ptr(model));
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+    // render lamp box
+    //-----------------
+    LampShader.use();
+    LampShader.setMatrix("view", glm::value_ptr(camera.GetViewMatrix()));
+    LampShader.setMatrix("projection", glm::value_ptr(projection));
+    model = glm::translate(glm::mat4(1.0), lightPos);
+    model = glm::scale(model, glm::vec3(0.2f));
+    LampShader.setMatrix("model", glm::value_ptr(model));
+    glDrawArrays(GL_TRIANGLES, 0, 36);
 }
+//old code which is not useful now
+// -----------------------------------------------------
 /*
 void drawCube() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -160,7 +169,50 @@ void drawCube() {
         glDrawArrays(GL_TRIANGLES, 0, 36);
     }
 }*/
+inline void setUniforms(){
+    lightingshader.use();
+    lightingshader.setVec3("material.ambient", material.ambientColors[0], material.ambientColors[1],
+                           material.ambientColors[2]);
+    lightingshader.setVec3("material.diffuse", material.diffuseColors[0], material.diffuseColors[1],
+                           material.ambientColors[2]);
+    lightingshader.setVec3("material.specular", material.specularColors[0], material.specularColors[1],
+                           material.specularColors[2]);
+    lightingshader.setFloat("material.shininess", material.shininess);
 
+    lightingshader.setInt("dirLightSet", setDirectionLight);
+    lightingshader.setVec3("dirLight.light.color", dirLight.lightColor[0], dirLight.lightColor[1],
+                           dirLight.lightColor[2]);
+    lightingshader.setFloat("dirLight.light.ambient", dirLight.intensities[0] * dirLight.intensities[1]);
+    lightingshader.setFloat("dirLight.light.diffuse", dirLight.intensities[0] * dirLight.intensities[2]);
+    lightingshader.setFloat("dirLight.light.specular", dirLight.intensities[0] * dirLight.intensities[3]);
+    lightingshader.setVec3("dirLight.dir", 0.0f, -5.0f, -6.0f);
+
+    lightingshader.setInt("pointLightSet", setPointLight);
+    lightingshader.setVec3("pointLight.light.color", pointLight.lightColor[0], pointLight.lightColor[1],
+                           pointLight.lightColor[2]);
+    lightingshader.setFloat("pointLight.light.ambient", pointLight.intensities[0] * pointLight.intensities[1]);
+    lightingshader.setFloat("pointLight.light.diffuse", pointLight.intensities[0] * pointLight.intensities[2]);
+    lightingshader.setFloat("pointLight.light.specular", pointLight.intensities[0] * pointLight.intensities[3]);
+    lightingshader.setFloat("pointLight.constant", pointLight.attenuation.constant);
+    lightingshader.setFloat("pointLight.linear", pointLight.attenuation.linear);
+    lightingshader.setFloat("pointLight.quadratic", pointLight.attenuation.quadratic);
+
+    lightingshader.setInt("spotLightSet", setSpotLight);
+    lightingshader.setVec3("spotLight.light.color", spotLight.light.lightColor[0],
+                           spotLight.light.lightColor[1], spotLight.light.lightColor[2]);
+    lightingshader.setFloat("spotLight.light.ambient",
+                            spotLight.light.intensities[0] * spotLight.light.intensities[1]);
+    lightingshader.setFloat("spotLight.light.diffuse",
+                            spotLight.light.intensities[0] * spotLight.light.intensities[2]);
+    lightingshader.setFloat("spotLight.light.specular",
+                            spotLight.light.intensities[0] * spotLight.light.intensities[3]);
+    lightingshader.setFloat("spotLight.constant", spotLight.light.attenuation.constant);
+    lightingshader.setFloat("spotLight.linear", spotLight.light.attenuation.linear);
+    lightingshader.setFloat("spotLight.quadratic", spotLight.light.attenuation.quadratic);
+    lightingshader.setFloat("spotLight.cutOff", glm::cos(glm::radians(spotLight.innerCone)));
+    lightingshader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(spotLight.outerCone)));
+    lightingshader.setInt("Texture0", 0);
+}
 
 int main() {
     // glfw: initialize and configure
@@ -195,12 +247,22 @@ int main() {
         glfwTerminate();
         return -1;
     }
-    // create and bind vertex buffer objects(VBO), vertex array Objects(VAO)-------------
+    // Setup Dear ImGui context
+    //----------------------------------------
+    ImGui::CreateContext();
+    ImGuiIO &io = ImGui::GetIO();
+    // Setup Platform/Renderer bindings
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init();
+    // Setup Dear ImGui style
+    ImGui::StyleColorsDark();
+
+    // create and bind vertex buffer objects(VBO), vertex array Objects(VAO)
+    //------------------------------------------
     //generate buffers
-    //----------------
     glGenBuffers(1, &VBO);
     glGenVertexArrays(1, &LightVAO);
-   // glGenVertexArrays(1, &VAO);
+    // glGenVertexArrays(1, &VAO);
 
     // buffer the cube data to VBO
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -274,47 +336,14 @@ int main() {
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, textures[1]);
 
-    //set the uniforms for shader
+    //set the default uniforms for shader
     //----------------------
     //old unused shader
     /*textureShader.use();
     textureShader.setInt("Texture0", 0);
     textureShader.setInt("Texture1", 1);
     textureShader.setFloat("Transparency", 0.3);*/
-    lightingshader.use();
-    lightingshader.setVec3("material.ambient", 0.78431f, 0.549f, 0.2745f);
-    lightingshader.setVec3("material.diffuse", 0.78431f, 0.549f, 0.2745f);
-    lightingshader.setVec3("material.specular", 0.78431f, 0.6666f, 0.2352f);
-    lightingshader.setFloat("material.shininess", 32.0f);
 
-    lightingshader.setInt("dirLightSet",1);
-    lightingshader.setVec3("dirLight.light.color", 1.0f, 1.0f, 1.0f);
-    lightingshader.setFloat("dirLight.light.ambient", 0.1f);
-    lightingshader.setFloat("dirLight.light.diffuse", 0.2f);
-    lightingshader.setFloat("dirLight.light.specular", 0.3f);
-    lightingshader.setVec3("dirLight.dir", 0.0f, -5.0f, -6.0f);
-
-
-    lightingshader.setInt("pointLightSet",1);
-    lightingshader.setVec3("pointLight.light.color", 1.0f, 1.0f, 1.0f);
-    lightingshader.setFloat("pointLight.light.ambient", 0.1f);
-    lightingshader.setFloat("pointLight.light.diffuse", 0.5f);
-    lightingshader.setFloat("pointLight.light.specular", 0.6f);
-    lightingshader.setFloat("pointLight.constant", 1.0f);
-    lightingshader.setFloat("pointLight.linear", 0.09f);
-    lightingshader.setFloat("pointLight.quadratic", 0.032f);
-
-    lightingshader.setInt("spotLightSet",1);
-    lightingshader.setVec3("spotLight.light.color", 1.0f, 1.0f, 1.0f);
-    lightingshader.setFloat("spotLight.light.ambient", 0.1f);
-    lightingshader.setFloat("spotLight.light.diffuse", 1.2f);
-    lightingshader.setFloat("spotLight.light.specular", 0.6f);
-    lightingshader.setFloat("spotLight.constant", 1.0f);
-    lightingshader.setFloat("spotLight.linear", 0.09f);
-    lightingshader.setFloat("spotLight.quadratic", 0.032f);
-    lightingshader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
-    lightingshader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
-    lightingshader.setInt("Texture0", 0);
     //-----------------------------------------------------------------------------------
     //glfw: set the limiter of FPS to the refresh rate of monitor
     glfwSwapInterval(1);
@@ -329,22 +358,37 @@ int main() {
         double currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
-            const float radius = 5;
-            lightPos.x = cos(glfwGetTime()) * radius;
-            lightPos.z = sin(glfwGetTime()) * radius;
+        //calculate position of the lamp
+        //------------------------------
+        if (movingLamp) {
+            lightPos.x = lightCenter[0] + cos(glfwGetTime() * speed) * radius;
+            lightPos.y = lightCenter[1];
+            lightPos.z = lightCenter[2] + sin(glfwGetTime() * speed) * radius;
+        }
         // input
         // -----
         processInput(window);
 
         // set the background color and clear the buffer with it
         // -----------------------------------------------------
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClearColor(backgroundColor[0], backgroundColor[1], backgroundColor[2], 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        //change uniforms if it's changed
+        //-----------------------------------------
+        if (changedUniform) {
+            changedUniform = false;
+            setUniforms();
+        }
 
         //draw the scene
         //--------------
         draw();
-        // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
+        //draw the GUI
+        //------------------
+        if (!hideGui) {
+            drawMenu();
+        }
+        // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved ...)
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -366,50 +410,6 @@ void processInput(GLFWwindow *window) {
     if (glfwGetKey(window, GLFW_KEY_D))
         camera.ProccesCameraMovement(RightMovement, deltaTime);
     //-------------------------------------------------------------------
-    if (glfwGetKey(window, GLFW_KEY_1)) {
-        //toggle the global light
-        //-------------------------
-        lightingshader.use();
-        if (globalLight){
-            globalLight = false;
-            lightingshader.setInt("dirLightSet",0);
-        }
-        else {
-            globalLight = true;
-            lightingshader.setInt("dirLightSet",1);
-        }
-        std::this_thread::sleep_for(std::chrono::milliseconds (60));
-    }
-    if (glfwGetKey(window, GLFW_KEY_2)){
-        //toggle the light from lamp
-        //-------------------------
-        lightingshader.use();
-        if (lampLight){
-            lampLight = false;
-            lightingshader.setInt("pointLightSet",0);
-        }
-        else {
-            lampLight = true;
-            lightingshader.setInt("pointLightSet",1);
-        }
-        //need to sleep the thread, to prevent registering the key press multiple times
-        //TODO: make better solution, then just put the thread to sleep
-        std::this_thread::sleep_for(std::chrono::milliseconds (60));
-    }
-    if (glfwGetKey(window, GLFW_KEY_3)){
-        //toggle the flashlight
-        //---------------------
-        lightingshader.use();
-        if (flashlight){
-            flashlight = false;
-            lightingshader.setInt("spotLightSet",0);
-        }
-        else {
-            flashlight = true;
-            lightingshader.setInt("spotLightSet",1);
-        }
-        std::this_thread::sleep_for(std::chrono::milliseconds (60));
-     }
     //old already unused actions
     /*
     if (glfwGetKey(window, GLFW_KEY_Q)) {
@@ -422,12 +422,11 @@ void processInput(GLFWwindow *window) {
     if (glfwGetKey(window, GLFW_KEY_KP_7)) {
         FOV -= 1;
         std::cout << "FOV: " << FOV << std::endl;
-    }
-    else if (glfwGetKey(window, GLFW_KEY_KP_8)) {
+    } else if (glfwGetKey(window, GLFW_KEY_KP_8)) {
         FOV += 1;
         std::cout << "FOV: " << FOV << std::endl;
     }
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE)){
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE)) {
         //closing window
         glfwSetWindowShouldClose(window, GLFW_TRUE);
     }
@@ -436,12 +435,28 @@ void processInput(GLFWwindow *window) {
         std::cout << camera.Yaw << " " << camera.Pitch << std::endl << camera.Position.x << " " << camera.Position.y
                   << " " << camera.Position.z << std::endl;
     }
+    if (glfwGetKey(window, GLFW_KEY_M)) {
+        if (hideGui) {
+            hideGui = false;
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            //disable camera movement
+            glfwSetCursorPosCallback(window, nullptr);
+        } else {
+            hideGui = true;
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            //enable camera movement
+            glfwSetCursorPosCallback(window, mouse_callback);
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(60));
+    }
 }
+
 // callback function called  when the mouse position change
 //---------------------------------------------------------
 void mouse_callback(GLFWwindow *window, double xPos, double yPos) {
     camera.ProccesMouseMovement(xPos, yPos);
 }
+
 // callback function called  when size of the window change
 //---------------------------------------------------------
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
