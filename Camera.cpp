@@ -5,8 +5,8 @@
 #include <glm/ext/matrix_transform.hpp>
 #include "Camera.h"
 #include "glm/glm.hpp"
-#include "Constants.h"
 #include <GLFW/glfw3.h>
+#include "settings.h"
 Camera::Camera(const float yaw, const float pitch, const glm::vec3 position, const glm::vec3 up) {
     Yaw = yaw;
     Pitch = pitch;
@@ -38,18 +38,18 @@ void Camera::ProccesMouseMovement (const float xPos, const float yPos) {
     float yOffset = yPos - lastY;
     lastX = xPos;
     lastY = yPos;
-    Yaw += xOffset * MOUSE_SENSITIVITY;
-    Pitch -= yOffset * MOUSE_SENSITIVITY;
+    Yaw += xOffset * settings::mouseSensitivity;
+    Pitch -= yOffset * settings::mouseSensitivity;
 
-    if (Pitch < PITCH_MIN)
-        Pitch = PITCH_MIN;
-    else if (Pitch > PITCH_MAX)
-        Pitch = PITCH_MAX;
+    if (Pitch < settings::pitchMin)
+        Pitch = settings::pitchMin;
+    else if (Pitch > settings::pitchMax)
+        Pitch = settings::pitchMax;
     UpdateCameraVectors();
 }
 
 void Camera::ProccesCameraMovement(const CameraMovement movement, const float deltatime) {
-    float velocity = CAMERA_SPEED * deltatime;
+    float velocity = settings::cameraSpeed * deltatime;
     switch (movement) {
         case Forward:
             Position += Front * velocity;

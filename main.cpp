@@ -8,7 +8,6 @@
 #include <list>
 #include "settings.h"
 #include "Shader.h"
-#include "Constants.h"
 #include "Camera.h"
 #include <iostream>
 #include "Texture.h"
@@ -117,7 +116,7 @@ void drawCubeLights() {
     lightingshader.setVec3("spotLight.direction", camera.Front.x, camera.Front.y, camera.Front.z);
     lightingshader.setVec3("spotLight.position", camera.Position.x, camera.Position.y, camera.Position.z);
     lightingshader.setVec3("viewPos", camera.Position.x, camera.Position.y, camera.Position.z);
-    projection = glm::perspective(glm::radians(FOV), (float) SCR_WIDTH / SCR_HEIGHT, 0.1f, 100.0f);
+    projection = glm::perspective(glm::radians(FOV), (float) settings::scrWidth / settings::scrHeight, 0.1f, 100.0f);
     lightingshader.setMatrix("view", glm::value_ptr(camera.GetViewMatrix()));
     lightingshader.setMatrix("projection", glm::value_ptr(projection));
 
@@ -196,7 +195,12 @@ int main() {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     // glfw window creation
     // --------------------
-    GLFWwindow *window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "testProject", nullptr, nullptr);
+    //getting the actual primary monitor resolution
+    const GLFWvidmode* monitor = glfwGetVideoMode(glfwGetPrimaryMonitor());
+    settings::scrWidth = monitor->width;
+    settings::scrHeight = monitor->height;
+
+    GLFWwindow *window = glfwCreateWindow(settings::scrWidth, settings::scrHeight, "testProject", nullptr, nullptr);
     if (window == nullptr) {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
@@ -287,6 +291,7 @@ int main() {
         glfwTerminate();
         return -1;
     }
+    /* unused texture
     builder.SetSource("textures/awesomeface.png");
     builder.SetYflip(true);
     builder.SetColorMode(GL_RGBA);
@@ -299,7 +304,7 @@ int main() {
         std::cout << fail.what() << std::endl;
         glfwTerminate();
         return -1;
-    }
+    }*/
     //---------
     //activate and bind texture units
     //------------------------------

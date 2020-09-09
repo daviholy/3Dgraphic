@@ -60,6 +60,12 @@ public:
 //--------------------------
    inline static float backgroundColor[3] = {0.2f, 0.3f, 0.3};
 
+    inline static  unsigned int scrWidth = 400;
+    inline static  unsigned int scrHeight = 400;
+    inline static  float mouseSensitivity = 0.2f;
+    inline static  float pitchMax = 89.0f;
+    inline static  float pitchMin = -89.0f;
+    inline static  float cameraSpeed = 1.2f ;
    inline static  bool movingLamp = true;
    inline static  bool setDirectionLight = true;
    inline static  bool setSpotLight = true;
