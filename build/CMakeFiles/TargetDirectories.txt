@@ -1,0 +1,3 @@
+C:/Users/davih/CLionProjects/3Dgraphic/build/CMakeFiles/3D.dir
+C:/Users/davih/CLionProjects/3Dgraphic/build/CMakeFiles/edit_cache.dir
+C:/Users/davih/CLionProjects/3Dgraphic/build/CMakeFiles/rebuild_cache.dir

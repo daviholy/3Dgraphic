@@ -6,7 +6,3 @@
 /dataSources.local.xml
 # Editor-based HTTP Client requests
 /httpRequests/
-
-../cmake-build-debug
-!../cmake-build-debug/shaders
-!../cmake-build-debug/textures
