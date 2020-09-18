@@ -5,16 +5,17 @@
 #include <GLFW/glfw3.h>
 #include <thread>
 #include <cmath>
-#include <list>
+#include <iostream>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <fstream>
 #include "settings.h"
 #include "Shader.h"
 #include "Camera.h"
-#include <iostream>
-#include "Texture.h"
-#include"glm/gtc/matrix_transform.hpp"
-#include <glm/gtc/type_ptr.hpp>
-#include <fstream>
-
+#include "TextureBuilder.h"
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 //headers of functions used in the file
 //------------------------------------
@@ -187,6 +188,8 @@ inline void setUniforms(){
 }
 
 int main() {
+
+    Assimp::Importer importer;
     // glfw: initialize and configure
     // ------------------------------
     glfwInit();
