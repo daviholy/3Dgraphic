@@ -34,11 +34,12 @@ void TextureBuilder::Reset() {
 void TextureBuilder::SetYflip(const bool value) {
     _Yflip = value;
 }
+//TODO:: delete the image from memory after sending it to GPU, implement some memory buffer
 GLuint TextureBuilder::Build() {
     if (_Source.empty())
         throw std::logic_error ("Didn't specified source");
     stbi_set_flip_vertically_on_load(_Yflip);
-    GLuint ID;
+    GLuint ID = 0;
     glGenTextures(1,&ID);
     glBindTexture(GL_TEXTURE_2D,ID);
     //use repeat wrapping

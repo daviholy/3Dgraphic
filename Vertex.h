@@ -7,6 +7,7 @@
 
 #include <glm/vec3.hpp>
 #include <glm/vec2.hpp>
+#include <assimp/mesh.h>
 
 struct Vertex {
     glm::vec3 Position;

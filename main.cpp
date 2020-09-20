@@ -13,9 +13,7 @@
 #include "Shader.h"
 #include "Camera.h"
 #include "TextureBuilder.h"
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
+#include "Model.h"
 
 //headers of functions used in the file
 //------------------------------------
@@ -40,7 +38,7 @@ glm::vec3 lightPos = glm::vec3(1.2, 0, 2.0);
 //for saving cursor position
 double xPos,yPos;
 void (*draw)() = drawCubeLights;
-
+Model object;
 //TODO: implement the object loader system, for loading more complex objects
 /*========================
   polygon data of the cube
@@ -123,14 +121,15 @@ void drawCubeLights() {
 
     //render the boxes
     //----------------
-    for (unsigned int i = 0; i < 10; i++) {
+    object.Draw(lightingshader);
+    /*for (unsigned int i = 0; i < 10; i++) {
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, cubePositions[i]);
         float angle = 20.0f * i;
         model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
         lightingshader.setMatrix("model", glm::value_ptr(model));
         glDrawArrays(GL_TRIANGLES, 0, 36);
-    }
+    }*/
     // render lamp box
     //-----------------
     LampShader.use();
@@ -188,8 +187,6 @@ inline void setUniforms(){
 }
 
 int main() {
-
-    Assimp::Importer importer;
     // glfw: initialize and configure
     // ------------------------------
     glfwInit();
@@ -236,10 +233,12 @@ int main() {
     ImGui_ImplOpenGL3_Init();
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
+
+    object = Model("models/survival Backpack/backpack.obj");
     // create and bind vertex buffer objects(VBO), vertex array Objects(VAO)
     //------------------------------------------
     //generate buffers
-    glGenBuffers(1, &VBO);
+   /* glGenBuffers(1, &VBO);
     glGenVertexArrays(1, &LightVAO);
     // glGenVertexArrays(1, &VAO);
 
@@ -248,12 +247,12 @@ int main() {
     glBufferData(GL_ARRAY_BUFFER, sizeof(cube), cube, GL_STATIC_DRAW);
 
     // old unused VAO
-    /* glBindVertexArray(VAO);
+     glBindVertexArray(VAO);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 8, nullptr);
     glEnableVertexAttribArray(0);
     //texture coords
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 8, (void *) (6 * sizeof(GLfloat)));
-    glEnableVertexAttribArray(1);*/
+    glEnableVertexAttribArray(1);
 
     //set the VAO with lighting (normal vectors)
     glBindVertexArray(LightVAO);
@@ -269,9 +268,8 @@ int main() {
     //3 attribute - texture coordinates
     //---------------------------------
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 8, (void *) (6 * sizeof(GLfloat)));
-    glEnableVertexAttribArray(2);
+    glEnableVertexAttribArray(2);*/
     //---------------------------------------------------
-
     //compile shaders -----------------------------
     try {
         //textureShader = Shader("shaders/textureVertex3D.shader", "shaders/textureFragment3D.shader");
@@ -283,17 +281,17 @@ int main() {
         glfwTerminate();
         return -1;
     }
-
     //---------------------------------------------
     //load textures
     //---------
-    TextureBuilder builder("textures/container.jpg");
+  /*  TextureBuilder builder("textures/container.jpg");
+//    builder.SetSource("textures" + "/" + "container.jpg" );
     try { textures[0] = builder.Build(); }
     catch (std::ios_base::failure &fail) {
         std::cout << fail.what() << std::endl;
         glfwTerminate();
         return -1;
-    }
+    }*/
     /* unused texture
     builder.SetSource("textures/awesomeface.png");
     builder.SetYflip(true);
@@ -311,11 +309,11 @@ int main() {
     //---------
     //activate and bind texture units
     //------------------------------
-    glActiveTexture(GL_TEXTURE0);
+   /* glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, textures[0]);
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, textures[1]);
-
+*/  
     //set the default uniforms for shader
     //----------------------
     //old unused shader
