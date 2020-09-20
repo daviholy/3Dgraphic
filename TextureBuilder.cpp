@@ -39,7 +39,7 @@ GLuint TextureBuilder::Build() {
     if (_Source.empty())
         throw std::logic_error ("Didn't specified source");
     stbi_set_flip_vertically_on_load(_Yflip);
-    GLuint ID = 0;
+    GLuint ID;
     glGenTextures(1,&ID);
     glBindTexture(GL_TEXTURE_2D,ID);
     //use repeat wrapping
