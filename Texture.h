@@ -10,5 +10,6 @@
 struct Texture {
     unsigned int id;
     std::string type;
+    std::string name;
 };
 #endif //GLFWTEST_TEXTURE_H

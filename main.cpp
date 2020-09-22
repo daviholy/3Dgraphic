@@ -25,9 +25,87 @@ void processInput(GLFWwindow *window);
 
 void drawCubeLights();
 
+#ifdef DEBUG
+//debug message function for opengl
+void APIENTRY glDebugOutput(GLenum source,GLenum type,unsigned int id,GLenum severity,GLsizei length,const char*message,const void*userParam) {
+    // ignore non-significant error/warning codes
+    if (id == 131169 || id == 131185 || id == 131218 || id == 131204) return;
+    std::cout << "---------------" << std::endl;
+    std::cout << "Debug message (" << id << "): " << message << std::endl;
+    switch (source) {
+        case GL_DEBUG_SOURCE_API:
+            std::cout << "Source: API";
+            break;
+        case GL_DEBUG_SOURCE_WINDOW_SYSTEM:
+            std::cout << "Source: Window System";
+            break;
+        case GL_DEBUG_SOURCE_SHADER_COMPILER:
+            std::cout << "Source: Shader Compiler";
+            break;
+        case GL_DEBUG_SOURCE_THIRD_PARTY:
+            std::cout << "Source: Third Party";
+            break;
+        case GL_DEBUG_SOURCE_APPLICATION:
+            std::cout << "Source: Application";
+            break;
+        case GL_DEBUG_SOURCE_OTHER:
+            std::cout << "Source: Other";
+            break;
+    }
+    std::cout << std::endl;
+    switch (type) {
+        case GL_DEBUG_TYPE_ERROR:
+            std::cout << "Type: Error";
+            break;
+        case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
+            std::cout << "Type: Deprecated Behaviour";
+            break;
+        case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
+            std::cout << "Type: Undefined Behaviour";
+            break;
+        case GL_DEBUG_TYPE_PORTABILITY:
+            std::cout << "Type: Portability";
+            break;
+        case GL_DEBUG_TYPE_PERFORMANCE:
+            std::cout << "Type: Performance";
+            break;
+        case GL_DEBUG_TYPE_MARKER:
+            std::cout << "Type: Marker";
+            break;
+        case GL_DEBUG_TYPE_PUSH_GROUP:
+            std::cout << "Type: Push Group";
+            break;
+        case GL_DEBUG_TYPE_POP_GROUP:
+            std::cout << "Type: Pop Group";
+            break;
+        case GL_DEBUG_TYPE_OTHER:
+            std::cout << "Type: Other";
+            break;
+    }
+    std::cout << std::endl;
+    switch (severity) {
+        case GL_DEBUG_SEVERITY_HIGH:
+            std::cout << "Severity: high";
+            break;
+        case GL_DEBUG_SEVERITY_MEDIUM:
+            std::cout << "Severity: medium";
+            break;
+        case GL_DEBUG_SEVERITY_LOW:
+            std::cout << "Severity: low";
+            break;
+        case GL_DEBUG_SEVERITY_NOTIFICATION:
+            std::cout << "Severity: notification";
+            break;
+    }
+    std::cout << std::endl;
+    std::cout << "Message: " << message << std::endl;
+    std::cout << std::endl;
+}
+#endif
+
 //global variables used across functions
 //--------------------------------------
-Shader lightingshader, LampShader;
+Shader lightingshader, LampShader, modelShader;
 float deltaTime = 0.0;
 GLuint VBO, LightVAO, textures[2];
 float deqree = 0;
@@ -43,7 +121,7 @@ Model object;
 /*========================
   polygon data of the cube
   ========================
-           position (3) normal vector(3) tex coord.(3)*/
+           position (3) normal vector(3) tex coord.(2)*/
 GLfloat cube[] = {
         -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
         0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f,
@@ -107,38 +185,41 @@ glm::vec3 cubePositions[] = {
 
 void drawCubeLights() {
     glBindVertexArray(LightVAO);
-    glm::mat4 model, projection;
+    glm::mat4 model(1.0f), projection = glm::perspective(glm::radians(FOV), (float) settings::scrWidth / settings::scrHeight, 0.1f, 100.0f);
     //setting the current positions to the uniforms
     //---------------------------------------------
-    lightingshader.use();
+    /*lightingshader.use();
     lightingshader.setVec3("pointLight.position", lightPos.x, lightPos.y, lightPos.z);
     lightingshader.setVec3("spotLight.direction", camera.Front.x, camera.Front.y, camera.Front.z);
     lightingshader.setVec3("spotLight.position", camera.Position.x, camera.Position.y, camera.Position.z);
     lightingshader.setVec3("viewPos", camera.Position.x, camera.Position.y, camera.Position.z);
-    projection = glm::perspective(glm::radians(FOV), (float) settings::scrWidth / settings::scrHeight, 0.1f, 100.0f);
     lightingshader.setMatrix("view", glm::value_ptr(camera.GetViewMatrix()));
-    lightingshader.setMatrix("projection", glm::value_ptr(projection));
-
+    lightingshader.setMatrix("projection", glm::value_ptr(projection));*/
+    modelShader.use();
+    modelShader.setMatrix("view", glm::value_ptr(camera.GetViewMatrix()));
+    modelShader.setMatrix("projection", glm::value_ptr(projection));
+    model = glm::scale(model,glm::vec3(1.0,1.0,1.0));
+    modelShader.setMatrix("model",glm::value_ptr(model));
+    object.Draw(modelShader);
     //render the boxes
     //----------------
-    object.Draw(lightingshader);
-    /*for (unsigned int i = 0; i < 10; i++) {
+   /* for (unsigned int i = 0; i < 10; i++) {
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, cubePositions[i]);
         float angle = 20.0f * i;
         model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-        lightingshader.setMatrix("model", glm::value_ptr(model));
+        modelShader.setMatrix("model", glm::value_ptr(model));
         glDrawArrays(GL_TRIANGLES, 0, 36);
     }*/
     // render lamp box
     //-----------------
-    LampShader.use();
+    /*LampShader.use();
     LampShader.setMatrix("view", glm::value_ptr(camera.GetViewMatrix()));
     LampShader.setMatrix("projection", glm::value_ptr(projection));
     model = glm::translate(glm::mat4(1.0), lightPos);
     model = glm::scale(model, glm::vec3(0.2f));
     LampShader.setMatrix("model", glm::value_ptr(model));
-    glDrawArrays(GL_TRIANGLES, 0, 36);
+    glDrawArrays(GL_TRIANGLES, 0, 36);*/
 }
 
 inline void setUniforms(){
@@ -190,8 +271,8 @@ int main() {
     // glfw: initialize and configure
     // ------------------------------
     glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     // glfw window creation
     // --------------------
@@ -224,6 +305,18 @@ int main() {
         glfwTerminate();
         return -1;
     }
+    //enable debug output log in opengl---------
+#ifdef DEBUG
+    int flags;
+    glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
+    if (flags & GL_CONTEXT_FLAG_DEBUG_BIT){
+        glEnable(GL_DEBUG_OUTPUT);
+        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+        glDebugMessageCallback(glDebugOutput, nullptr);
+        glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0,nullptr, GL_TRUE);
+    }
+    //-----------------------------------------
+#endif
     // Setup Dear ImGui context
     //----------------------------------------
     ImGui::CreateContext();
@@ -238,7 +331,7 @@ int main() {
     // create and bind vertex buffer objects(VBO), vertex array Objects(VAO)
     //------------------------------------------
     //generate buffers
-   /* glGenBuffers(1, &VBO);
+    glGenBuffers(1, &VBO);
     glGenVertexArrays(1, &LightVAO);
     // glGenVertexArrays(1, &VAO);
 
@@ -246,16 +339,16 @@ int main() {
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(cube), cube, GL_STATIC_DRAW);
 
-    // old unused VAO
+  /*  // old unused VAO
      glBindVertexArray(VAO);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 8, nullptr);
     glEnableVertexAttribArray(0);
     //texture coords
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 8, (void *) (6 * sizeof(GLfloat)));
     glEnableVertexAttribArray(1);
-
+*/
     //set the VAO with lighting (normal vectors)
-    glBindVertexArray(LightVAO);
+  /*  glBindVertexArray(LightVAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     //1 attribute - vertex positions
     //------------------------------
@@ -275,6 +368,7 @@ int main() {
         //textureShader = Shader("shaders/textureVertex3D.shader", "shaders/textureFragment3D.shader");
         lightingshader = Shader("shaders/lightingVertex.shader", "shaders/lightingFragment.shader");
         LampShader = Shader("shaders/textureVertex3D.shader", "shaders/lightingLamp.shader");
+        modelShader = Shader("shaders/modelVertex.shader","shaders/modelFragment.shader" );
     }
     catch (std::ifstream::failure &fail) {
         std::cout << fail.what() << std::endl;
@@ -313,7 +407,7 @@ int main() {
     glBindTexture(GL_TEXTURE_2D, textures[0]);
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, textures[1]);
-*/  
+*/
     //set the default uniforms for shader
     //----------------------
     //old unused shader
@@ -361,6 +455,7 @@ int main() {
         //draw the scene
         //--------------
         draw();
+
         //draw the GUI
         //------------------
         if (!settings::hideGui) {
@@ -370,6 +465,10 @@ int main() {
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
         glfwPollEvents();
+        //FIXME:rendering work but giving GL_INVALID_OPERATION, why?
+        /*if (glGetError() == GL_INVALID_OPERATION) {
+            std::cout << "some error in drawing mesh" << std::endl;
+        }*/
     }
 
     // glfw: terminate, clearing all previously allocated GLFW resources.

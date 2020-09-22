@@ -3,3 +3,4 @@
 !/build/shaders/**
 !/build/models/**
 /dependencies/assimpd.lib
+/cmake-build-release/

@@ -30,10 +30,10 @@ glEnableVertexAttribArray(0);
 glVertexAttribPointer(0,3, GL_FLOAT, GL_FALSE, sizeof(Vertex),(void*)0);
 //normal
 glEnableVertexAttribArray(1);
-glVertexAttribPointer(0,3, GL_FLOAT, GL_FALSE, sizeof(Vertex),(void*)offsetof(Vertex, Normal));
+glVertexAttribPointer(1,3, GL_FLOAT, GL_FALSE, sizeof(Vertex),(void*)offsetof(Vertex, Normal));
 //texture coordinate
 glEnableVertexAttribArray(2);
-glVertexAttribPointer(0,3, GL_FLOAT, GL_FALSE, sizeof(Vertex),(void*)offsetof(Vertex, TexCoords));
+glVertexAttribPointer(2,2, GL_FLOAT, GL_FALSE, sizeof(Vertex),(void*)offsetof(Vertex, TexCoords));
 //-------------------------------------
 
 glBindVertexArray(0);
@@ -43,7 +43,7 @@ void Mesh::Draw(Shader &shader) {
 unsigned int diffuseNr = 0;
 unsigned int specularNr =0;
 //setting texture units---------------
-/*for (int i=0; i <textures.size();i++){
+for (int i=0; i <textures.size();i++){
     //activate texture unit
     glActiveTexture(GL_TEXTURE0 + i);
     std::string name = textures[i].type;
@@ -52,16 +52,16 @@ unsigned int specularNr =0;
         number = std::to_string(diffuseNr++);
     else
         number = std::to_string(specularNr++);
-    shader.setFloat("material." + name + number, i);
-    glBindTexture(GL_TEXTURE0, textures[i].id);
-}*/
+    shader.setFloat(  name + number, i);
+    glBindTexture(GL_TEXTURE_2D, textures[i].id);
+}
 //--------------------------------------
 
 glActiveTexture(GL_TEXTURE0);
 
 //draw the mesh
 glBindVertexArray(VAO);
-glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, nullptr) ;
 glBindVertexArray(0);
 }
 

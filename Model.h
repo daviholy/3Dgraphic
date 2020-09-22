@@ -19,6 +19,7 @@ public:
             mesh.Draw(shader);
     }
 private:
+    std::vector<Texture>textures_loaded;
       Mesh convert(aiMesh *mesh_arg, const aiScene *scene);
     std::vector<Texture> loadMaterialTextures(aiMaterial *mat, aiTextureType type, const std::string& typeName);
     std::vector<Mesh> meshes;

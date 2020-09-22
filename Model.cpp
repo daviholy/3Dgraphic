@@ -16,7 +16,7 @@ Model::Model(std::string path) {
     }
     directory = path.substr(0,path.find_last_of(delimiter));
 #ifdef DEBUG
-    std::cout << scene->mNumMeshes << std::endl;
+    std::cout << "number of meshes for model " << path <<':' << scene->mNumMeshes << std::endl;
 #endif
     processNode(scene->mRootNode, scene);
 }
@@ -35,12 +35,15 @@ void Model::processNode(aiNode *node,  const aiScene *scene) {
 }
 Mesh Model::convert(aiMesh *mesh_arg,  const aiScene *scene) {
     //convert vertices-------------------
-    std::vector<Vertex> vertices = std::vector<Vertex>();
+    bool texture = mesh_arg->mTextureCoords[0];
+    std::vector<Vertex> vertices;
+    vertices.reserve(mesh_arg->mNumVertices);
+
     for (unsigned int i=0; i <mesh_arg->mNumVertices ; i++) {
         Vertex vertex =Vertex{glm::vec3(mesh_arg->mVertices[i].x, mesh_arg->mVertices[i].y, mesh_arg->mVertices[i].z),
                               glm::vec3(mesh_arg->mNormals[i].x, mesh_arg->mNormals[i].y, mesh_arg->mNormals[i].z),};
         //check if the mesh has texture coord
-        if (mesh_arg->mTextureCoords[0])
+        if (texture)
             vertex.TexCoords = glm::vec2(mesh_arg->mTextureCoords[0][i].x, mesh_arg->mTextureCoords[0][i].y);
         vertices.push_back(vertex);
     }
@@ -48,11 +51,14 @@ Mesh Model::convert(aiMesh *mesh_arg,  const aiScene *scene) {
 
     //convert indices-------------------
     std::vector<unsigned int> indices;
+    indices.reserve(mesh_arg->mNumFaces *3);
     for (unsigned int i=0; i <mesh_arg->mNumFaces;i++) {
         for (unsigned int j = 0; j < mesh_arg->mFaces[i].mNumIndices; j++)
             indices.push_back(mesh_arg->mFaces[i].mIndices[j]);
     }
     //----------------------------------
+
+    //convert textures-------------------
     //TODO: just implemented diffuse and specular textures
     std::vector<Texture> textures;
     if (mesh_arg->mMaterialIndex){
@@ -63,6 +69,7 @@ Mesh Model::convert(aiMesh *mesh_arg,  const aiScene *scene) {
         //TODO:copying vector to other vector which is O(n)!!!!
         textures.insert(textures.end(),specularMaps.begin(),specularMaps.end());
     }
+    //------------------------------------
     return Mesh(vertices,indices,textures);
 }
 
@@ -72,15 +79,35 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType 
     texturebuilder.SetYflip(true);
     for (unsigned int i = 0; i < mat->GetTextureCount(type); i++) {
         aiString str;
+        bool  skip =false;
         mat->GetTexture(type, i, &str);
-#ifdef DEBUG
-        std::cout << "loaded texture from " << directory + '/' +str.C_Str() << std::endl;
-#endif
-        texturebuilder.SetSource(directory + '/' +str.C_Str());
-        Texture texture;
-        texture.id = texturebuilder.Build();
-        texture.type = typeName;
-        textures.push_back(texture);
+        //checking if the texture isn't loaded------------------------
+       for(Texture  texture :textures_loaded){
+            if (texture.name == str.C_Str()){
+                //found identical texture
+                skip = true;
+                //TODO: copying whole Texture object, do just copy of address?
+                textures.push_back(texture);
+                break;
+            }
+        }
+        //------------------------------------------------------------
+
+        //loading the texture if it wasn't found----------------------
+        if (!skip) {
+            texturebuilder.SetSource(directory + '/' + str.C_Str());
+            Texture texture;
+            texture.id = texturebuilder.Build();
+            texture.type = typeName;
+            //TODO: comparing whole path, isn't comparing names sufficient?
+            texture.name = str.C_Str();
+            textures.push_back(texture);
+            textures_loaded.push_back(texture);
+            #ifdef DEBUG
+            std::cout << "loaded texture from " << directory + '/' + str.C_Str() << std::endl;
+            #endif
+        }
+        //-----------------------------------------------------------------
     }
     return textures;
 }
