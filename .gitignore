@@ -4,6 +4,6 @@
 !/build/models/**
 /dependencies/assimpd.lib
 /cmake-build-release/
-!/cmake-build-release/models.lnk
-!/cmake-build-release/shaders.lnk
-!/cmake-build-release/textures.lnk
+/cmake-build-release/models.lnk
+/cmake-build-release/shaders.lnk
+/cmake-build-release/textures.lnk
