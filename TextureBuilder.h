@@ -11,7 +11,8 @@ class TextureBuilder {
 private:
     bool _Yflip=false;
     GLuint _Repeat = GL_REPEAT;
-    GLuint _Filtering = GL_LINEAR;
+    GLuint _MinFiltering = GL_LINEAR;
+    GLuint _MaxFiltering = GL_NEAREST_MIPMAP_NEAREST;
     GLuint _Target = GL_TEXTURE_2D;
     GLuint _internalColorMode = GL_RGB;
     GLuint _ColorMode = GL_RGB;
@@ -21,7 +22,7 @@ public:
   void SetYflip(const bool value);
  void SetSource(const std::string& source);
  void SetRepeat(const int Repeat);
- void SetFiltering(const GLuint Filtering);
+ void SetFiltering(const GLuint MinFiltering, const GLuint MaxFiltering);
  void SetColorMode(const GLuint ColorMode);
  void SetInternalColorMode(const GLuint ColorMode);
  void Reset();

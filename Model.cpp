@@ -10,7 +10,7 @@
 
 Model::Model(std::string path) {
     Assimp::Importer importer;
-    const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+    const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate);
     if (!scene || scene ->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode){
         std::cout << "ERROR::ASSIMP::" << importer.GetErrorString() <<std::endl;
     }
@@ -51,6 +51,7 @@ Mesh Model::convert(aiMesh *mesh_arg,  const aiScene *scene) {
 
     //convert indices-------------------
     std::vector<unsigned int> indices;
+    //TODO: just true for triangulated objects
     indices.reserve(mesh_arg->mNumFaces *3);
     for (unsigned int i=0; i <mesh_arg->mNumFaces;i++) {
         for (unsigned int j = 0; j < mesh_arg->mFaces[i].mNumIndices; j++)
@@ -66,7 +67,7 @@ Mesh Model::convert(aiMesh *mesh_arg,  const aiScene *scene) {
         std::vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
         std::vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
         textures = diffuseMaps;
-        //TODO:copying vector to other vector which is O(n)!!!!
+        //TODO:copying vector to other vector which is O(n)!!!! (it dont have much big impact now, because the number of actual Textures are low)
         textures.insert(textures.end(),specularMaps.begin(),specularMaps.end());
     }
     //------------------------------------
@@ -76,7 +77,7 @@ Mesh Model::convert(aiMesh *mesh_arg,  const aiScene *scene) {
 std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, const std::string& typeName) {
     std::vector<Texture> textures;
     TextureBuilder texturebuilder("");
-    texturebuilder.SetYflip(true);
+    texturebuilder.SetFiltering(GL_LINEAR,GL_NEAREST);
     for (unsigned int i = 0; i < mat->GetTextureCount(type); i++) {
         aiString str;
         bool  skip =false;
@@ -99,7 +100,7 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType 
             Texture texture;
             texture.id = texturebuilder.Build();
             texture.type = typeName;
-            //TODO: comparing whole path, isn't comparing names sufficient?
+            //TODO: comparing whole given path, isn't comparing names sufficient?
             texture.name = str.C_Str();
             textures.push_back(texture);
             textures_loaded.push_back(texture);

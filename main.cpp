@@ -12,7 +12,6 @@
 #include "settings.h"
 #include "Shader.h"
 #include "Camera.h"
-#include "TextureBuilder.h"
 #include "Model.h"
 
 //headers of functions used in the file
@@ -117,71 +116,6 @@ glm::vec3 lightPos = glm::vec3(1.2, 0, 2.0);
 double xPos,yPos;
 void (*draw)() = drawCubeLights;
 Model object;
-//TODO: implement the object loader system, for loading more complex objects
-/*========================
-  polygon data of the cube
-  ========================
-           position (3) normal vector(3) tex coord.(2)*/
-GLfloat cube[] = {
-        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
-        0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f,
-        0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f,
-        0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f,
-        -0.5f, 0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
-
-        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-        0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
-        0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
-        0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
-        -0.5f, 0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
-        -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-
-        -0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-        -0.5f, 0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-        -0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-        -0.5f, -0.5f, 0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-        -0.5f, 0.5f, 0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-
-        0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-        0.5f, 0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-        0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-        0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-        0.5f, -0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-        0.5f, 0.5f, 0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-
-        -0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f,
-        0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 1.0f,
-        0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-        0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-        -0.5f, -0.5f, 0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-        -0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f,
-
-        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-        0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-        0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-        0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-        -0.5f, 0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-        -0.5f, 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f
-};
-
-/*==================================
-  positions of centers for the cubes
-  ==================================
-  */
-glm::vec3 cubePositions[] = {
-        glm::vec3(0.0f, 0.0f, 0.0f),
-        glm::vec3(2.0f, 5.0f, -15.0f),
-        glm::vec3(-1.5f, -2.2f, -2.5f),
-        glm::vec3(-3.8f, -2.0f, -12.3f),
-        glm::vec3(2.4f, -0.4f, -3.5f),
-        glm::vec3(-1.7f, 3.0f, -7.5f),
-        glm::vec3(1.3f, -2.0f, -2.5f),
-        glm::vec3(1.5f, 2.0f, -2.5f),
-        glm::vec3(1.5f, 0.2f, -1.5f),
-        glm::vec3(-1.3f, 1.0f, -1.5f)
-};
 
 void drawCubeLights() {
     glBindVertexArray(LightVAO);
@@ -326,43 +260,8 @@ int main() {
     ImGui_ImplOpenGL3_Init();
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
-
+    //loading object
     object = Model("models/survival Backpack/backpack.obj");
-    // create and bind vertex buffer objects(VBO), vertex array Objects(VAO)
-    //------------------------------------------
-    //generate buffers
-    glGenBuffers(1, &VBO);
-    glGenVertexArrays(1, &LightVAO);
-    // glGenVertexArrays(1, &VAO);
-
-    // buffer the cube data to VBO
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(cube), cube, GL_STATIC_DRAW);
-
-  /*  // old unused VAO
-     glBindVertexArray(VAO);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 8, nullptr);
-    glEnableVertexAttribArray(0);
-    //texture coords
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 8, (void *) (6 * sizeof(GLfloat)));
-    glEnableVertexAttribArray(1);
-*/
-    //set the VAO with lighting (normal vectors)
-  /*  glBindVertexArray(LightVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    //1 attribute - vertex positions
-    //------------------------------
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 8, nullptr);
-    glEnableVertexAttribArray(0);
-    //2 attribute - normal vectors
-    //----------------------------
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 8, (void *) (3 * sizeof(GLfloat)));
-    glEnableVertexAttribArray(1);
-    //3 attribute - texture coordinates
-    //---------------------------------
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 8, (void *) (6 * sizeof(GLfloat)));
-    glEnableVertexAttribArray(2);*/
-    //---------------------------------------------------
     //compile shaders -----------------------------
     try {
         //textureShader = Shader("shaders/textureVertex3D.shader", "shaders/textureFragment3D.shader");
@@ -375,31 +274,6 @@ int main() {
         glfwTerminate();
         return -1;
     }
-    //---------------------------------------------
-    //load textures
-    //---------
-  /*  TextureBuilder builder("textures/container.jpg");
-//    builder.SetSource("textures" + "/" + "container.jpg" );
-    try { textures[0] = builder.Build(); }
-    catch (std::ios_base::failure &fail) {
-        std::cout << fail.what() << std::endl;
-        glfwTerminate();
-        return -1;
-    }*/
-    /* unused texture
-    builder.SetSource("textures/awesomeface.png");
-    builder.SetYflip(true);
-    builder.SetColorMode(GL_RGBA);
-    builder.SetInternalColorMode(GL_RGBA);
-    builder.SetRepeat(GL_REPEAT);
-    try {
-        textures[1] = builder.Build();
-    }
-    catch (std::ios_base::failure &fail) {
-        std::cout << fail.what() << std::endl;
-        glfwTerminate();
-        return -1;
-    }*/
     //---------
     //activate and bind texture units
     //------------------------------
@@ -466,7 +340,7 @@ int main() {
         glfwSwapBuffers(window);
         glfwPollEvents();
         //FIXME:rendering work but giving GL_INVALID_OPERATION, why?
-        /*if (glGetError() == GL_INVALID_OPERATION) {
+       /* if (glGetError() == GL_INVALID_OPERATION) {
             std::cout << "some error in drawing mesh" << std::endl;
         }*/
     }

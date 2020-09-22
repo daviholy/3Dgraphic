@@ -11,8 +11,9 @@
 TextureBuilder::TextureBuilder(const std::string& Source){
     _Source = Source;
 }
-void TextureBuilder::SetFiltering(const GLuint Filtering) {
-    _Filtering = Filtering;
+void TextureBuilder::SetFiltering(const GLuint MaxFiltering, const GLuint MinFiltering) {
+    _MaxFiltering = MaxFiltering;
+    _MinFiltering = MinFiltering;
 }
 void TextureBuilder::SetSource(const std::string& source) {
     _Source = source;
@@ -26,7 +27,8 @@ void TextureBuilder::SetColorMode(const GLuint ColorMode) {
 void TextureBuilder::Reset() {
     _Source = nullptr;
     _Repeat = GL_REPEAT;
-    _Filtering = GL_LINEAR;
+    _MinFiltering = GL_LINEAR;
+    _MaxFiltering = GL_NEAREST_MIPMAP_NEAREST;
     _Target = GL_TEXTURE_2D;
     _ColorMode= GL_RGB;
     _internalColorMode = GL_RGB;
@@ -46,8 +48,8 @@ GLuint TextureBuilder::Build() {
     glTexParameteri(_Target, GL_TEXTURE_WRAP_S, _Repeat);
     glTexParameteri(_Target, GL_TEXTURE_WRAP_T, _Repeat);
     //use linear filtering
-    glTexParameteri(_Target, GL_TEXTURE_MIN_FILTER, _Filtering);
-    glTexParameteri(_Target, GL_TEXTURE_MAG_FILTER, _Filtering);
+    glTexParameteri(_Target, GL_TEXTURE_MIN_FILTER, _MinFiltering);
+    glTexParameteri(_Target, GL_TEXTURE_MAG_FILTER, _MaxFiltering);
     int textureWidth, textureHeight, textureNrChannels;
     unsigned char *textureData = stbi_load(_Source.c_str(),&textureWidth,&textureHeight,&textureNrChannels,0);
     if (textureData) {
