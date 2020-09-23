@@ -14,9 +14,9 @@ class Model {
 public:
     Model()=default;
     Model(std::string path);
-    void Draw(Shader &shader){
+    void Draw(const Shader &shader, const std::string &UniformMaterial){
         for (Mesh mesh : meshes)
-            mesh.Draw(shader);
+            mesh.Draw(shader, UniformMaterial);
     }
 private:
     std::vector<Texture>textures_loaded;

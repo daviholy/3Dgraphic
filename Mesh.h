@@ -17,7 +17,7 @@ public:
     std::vector<unsigned int> indices;
     std::vector<Texture> textures;
     //convert from aiMesh (Assimp structure) to our mesh Structure
-    void Draw(Shader &shader);
+    void Draw(const Shader &shader, const std::string& UniformMaterial);
     Mesh(std::vector<Vertex> vertices_arg, std::vector<unsigned  int> indices_arg, std::vector<Texture> textures_arg){
         vertices = vertices_arg;
         indices = indices_arg;

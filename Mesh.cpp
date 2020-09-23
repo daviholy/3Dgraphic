@@ -2,7 +2,6 @@
 // Created by davih on 18.09.2020.
 //
 
-#include <assimp/material.h>
 #include <iostream>
 #include <assimp/scene.h>
 #include "Mesh.h"
@@ -27,7 +26,7 @@ glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &in
 //set attribute pointers in VAO------
 //vertex positions
 glEnableVertexAttribArray(0);
-glVertexAttribPointer(0,3, GL_FLOAT, GL_FALSE, sizeof(Vertex),(void*)0);
+glVertexAttribPointer(0,3, GL_FLOAT, GL_FALSE, sizeof(Vertex),(void*) nullptr);
 //normal
 glEnableVertexAttribArray(1);
 glVertexAttribPointer(1,3, GL_FLOAT, GL_FALSE, sizeof(Vertex),(void*)offsetof(Vertex, Normal));
@@ -38,7 +37,7 @@ glVertexAttribPointer(2,2, GL_FLOAT, GL_FALSE, sizeof(Vertex),(void*)offsetof(Ve
 
 glBindVertexArray(0);
 }
-void Mesh::Draw(Shader &shader) {
+void Mesh::Draw(const Shader &shader, const std::string& UniformMaterial) {
 //using uniform naming conventions {type}{nr} nr= 0, 1, 2......
 unsigned int diffuseNr = 0;
 unsigned int specularNr =0;
@@ -52,7 +51,7 @@ for (int i=0; i <textures.size();i++){
         number = std::to_string(diffuseNr++);
     else
         number = std::to_string(specularNr++);
-    shader.setFloat(  name + number, i);
+    shader.setFloat (UniformMaterial + name + number, i);
     glBindTexture(GL_TEXTURE_2D, textures[i].id);
 }
 //--------------------------------------

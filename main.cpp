@@ -134,7 +134,7 @@ void drawCubeLights() {
     modelShader.setMatrix("projection", glm::value_ptr(projection));
     model = glm::scale(model,glm::vec3(1.0,1.0,1.0));
     modelShader.setMatrix("model",glm::value_ptr(model));
-    object.Draw(modelShader);
+    object.Draw(modelShader, "material.");
     //render the boxes
     //----------------
    /* for (unsigned int i = 0; i < 10; i++) {
@@ -157,24 +157,17 @@ void drawCubeLights() {
 }
 
 inline void setUniforms(){
-    lightingshader.use();
-    lightingshader.setVec3("material.ambient", settings::material.ambientColors[0], settings::material.ambientColors[1],
-                           settings::material.ambientColors[2]);
-    lightingshader.setVec3("material.diffuse", settings::material.diffuseColors[0], settings::material.diffuseColors[1],
-                           settings::material.ambientColors[2]);
-    lightingshader.setVec3("material.specular", settings::material.specularColors[0], settings::material.specularColors[1],
-                           settings::material.specularColors[2]);
-    lightingshader.setFloat("material.shininess", settings::material.shininess);
+    modelShader.use();
+    modelShader.setFloat("material.shininess", settings::material.shininess);
+    modelShader.setInt("dirLightSet", settings::setDirectionLight);
+    modelShader.setVec3("dirLight.light.color", settings::dirLight.lightColor[0], settings::dirLight.lightColor[1],
+                    settings::dirLight.lightColor[2]);
+    modelShader.setFloat("dirLight.light.ambient", settings::dirLight.intensities[0] * settings::dirLight.intensities[1]);
+    modelShader.setFloat("dirLight.light.diffuse", settings::dirLight.intensities[0] * settings::dirLight.intensities[2]);
+    modelShader.setFloat("dirLight.light.specular", settings::dirLight.intensities[0] * settings::dirLight.intensities[3]);
+    modelShader.setVec3("dirLight.dir", 0.0f, -5.0f, -6.0f);
 
-    lightingshader.setInt("dirLightSet", settings::setDirectionLight);
-    lightingshader.setVec3("dirLight.light.color", settings::dirLight.lightColor[0], settings::dirLight.lightColor[1],
-                           settings::dirLight.lightColor[2]);
-    lightingshader.setFloat("dirLight.light.ambient", settings::dirLight.intensities[0] * settings::dirLight.intensities[1]);
-    lightingshader.setFloat("dirLight.light.diffuse", settings::dirLight.intensities[0] * settings::dirLight.intensities[2]);
-    lightingshader.setFloat("dirLight.light.specular", settings::dirLight.intensities[0] * settings::dirLight.intensities[3]);
-    lightingshader.setVec3("dirLight.dir", 0.0f, -5.0f, -6.0f);
-
-    lightingshader.setInt("pointLightSet", settings::setPointLight);
+   /* lightingshader.setInt("pointLightSet", settings::setPointLight);
     lightingshader.setVec3("pointLight.light.color", settings::pointLight.lightColor[0], settings::pointLight.lightColor[1],
                            settings::pointLight.lightColor[2]);
     lightingshader.setFloat("pointLight.light.ambient", settings::pointLight.intensities[0] * settings::pointLight.intensities[1]);
@@ -198,7 +191,7 @@ inline void setUniforms(){
     lightingshader.setFloat("spotLight.quadratic", settings::spotLight.light.attenuation.quadratic);
     lightingshader.setFloat("spotLight.cutOff", glm::cos(glm::radians(settings::spotLight.innerCone)));
     lightingshader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(settings::spotLight.outerCone)));
-    lightingshader.setInt("Texture0", 0);
+    lightingshader.setInt("Texture0", 0);*/
 }
 
 int main() {
@@ -319,7 +312,7 @@ int main() {
         // -----------------------------------------------------
         glClearColor(settings::backgroundColor[0], settings::backgroundColor[1], settings::backgroundColor[2], 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        //change uniforms if it's changed
+        //change uniforms if it's not changed
         //-----------------------------------------
         if (settings::changedUniform) {
             settings::changedUniform = false;

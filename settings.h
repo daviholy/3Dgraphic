@@ -19,8 +19,7 @@ private:
 //definition of structures
 //---------------------------
     struct Material {
-        //{R, G, B}
-        float ambientColors[3], diffuseColors[3], specularColors[3], shininess;
+        float  shininess;
     };
     struct Attenuation {
         float constant, linear, quadratic;
@@ -51,12 +50,9 @@ public:
                                         1.0f, 0.09f, 0.032f,
                                         15.0f, 6.0f};
 //--------------------------------------
-//material variables
+//material variable
 //-------------------------
-  inline  static  Material material = {0.931f, 0.848f, 0.749f,
-                                       0.799f, 0.727f, 0.045,
-                                       0.871f, 0.742f, 0.068f,
-                                       32};
+  inline  static  Material material = {32};
 //--------------------------
    inline static float backgroundColor[3] = {0.2f, 0.3f, 0.3};
 
@@ -174,23 +170,6 @@ private:
    static inline void drawMaterialProperties(Material &material) {
         if (ImGui::SliderFloat("shininess", &material.shininess, 0.001, 128))
             changedUniform = true;
-        //ambient color
-        ImGui::PushID(IDnum++);
-        if (ImGui::ColorEdit3("Ambient", material.ambientColors))
-            changedUniform = true;
-        ImGui::PopID();
-
-        // diffuse color
-        ImGui::PushID(IDnum++);
-        if (ImGui::ColorEdit3("Diffuse", material.diffuseColors))
-            changedUniform = true;
-        ImGui::PopID();
-
-        //specular color
-        ImGui::PushID(IDnum++);
-        if (ImGui::ColorEdit3("Specular", material.specularColors))
-            changedUniform = true;
-        ImGui::PopID();
 
     }
 public:
