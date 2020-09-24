@@ -1,6 +1,17 @@
 //
 // Created by davih on 27.04.2020.
 //
+/*todo: things to add:
+ *semi transparent objects
+ * animation system
+ * multiple lamps
+ * static camera
+ * culling
+ * perlin noise
+ */
+/*FIXME: bugs:
+ * can't move lamp when it's stopped
+ */
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <thread>
@@ -104,7 +115,7 @@ void APIENTRY glDebugOutput(GLenum source,GLenum type,unsigned int id,GLenum sev
 
 //global variables used across functions
 //--------------------------------------
-Shader lightingshader, LampShader, modelShader;
+Shader  LampShader, modelShader;
 float deltaTime = 0.0;
 GLuint VBO, LightVAO, textures[2];
 float deqree = 0;
@@ -115,48 +126,38 @@ glm::vec3 lightPos = glm::vec3(1.2, 0, 2.0);
 //for saving cursor position
 double xPos,yPos;
 void (*draw)() = drawCubeLights;
-Model object;
+Model object, lamp;
 
 void drawCubeLights() {
     glBindVertexArray(LightVAO);
     glm::mat4 model(1.0f), projection = glm::perspective(glm::radians(FOV), (float) settings::scrWidth / settings::scrHeight, 0.1f, 100.0f);
     //setting the current positions to the uniforms
     //---------------------------------------------
-    /*lightingshader.use();
-    lightingshader.setVec3("pointLight.position", lightPos.x, lightPos.y, lightPos.z);
-    lightingshader.setVec3("spotLight.direction", camera.Front.x, camera.Front.y, camera.Front.z);
-    lightingshader.setVec3("spotLight.position", camera.Position.x, camera.Position.y, camera.Position.z);
-    lightingshader.setVec3("viewPos", camera.Position.x, camera.Position.y, camera.Position.z);
-    lightingshader.setMatrix("view", glm::value_ptr(camera.GetViewMatrix()));
-    lightingshader.setMatrix("projection", glm::value_ptr(projection));*/
     modelShader.use();
+    modelShader.setVec3("pointLight.position", lightPos.x, lightPos.y, lightPos.z);
+    modelShader.setVec3("spotLight.direction", camera.Front.x, camera.Front.y, camera.Front.z);
+    modelShader.setVec3("spotLight.position", camera.Position.x, camera.Position.y, camera.Position.z);
+    modelShader.setVec3("viewPos", camera.Position.x, camera.Position.y, camera.Position.z);
     modelShader.setMatrix("view", glm::value_ptr(camera.GetViewMatrix()));
     modelShader.setMatrix("projection", glm::value_ptr(projection));
     model = glm::scale(model,glm::vec3(1.0,1.0,1.0));
     modelShader.setMatrix("model",glm::value_ptr(model));
     object.Draw(modelShader, "material.");
-    //render the boxes
-    //----------------
-   /* for (unsigned int i = 0; i < 10; i++) {
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, cubePositions[i]);
-        float angle = 20.0f * i;
-        model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-        modelShader.setMatrix("model", glm::value_ptr(model));
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-    }*/
-    // render lamp box
+    // render lamp
     //-----------------
-    /*LampShader.use();
+    LampShader.use();
     LampShader.setMatrix("view", glm::value_ptr(camera.GetViewMatrix()));
     LampShader.setMatrix("projection", glm::value_ptr(projection));
     model = glm::translate(glm::mat4(1.0), lightPos);
     model = glm::scale(model, glm::vec3(0.2f));
     LampShader.setMatrix("model", glm::value_ptr(model));
-    glDrawArrays(GL_TRIANGLES, 0, 36);*/
+    LampShader.setVec3("lightColor", settings::pointLight.lightColor[0],settings::pointLight.lightColor[1],
+                       settings::pointLight.lightColor[2]);
+    lamp.Draw(LampShader,"");
 }
 
 inline void setUniforms(){
+    //TODO: implement better uniform class then this hardcoded crap?
     modelShader.use();
     modelShader.setFloat("material.shininess", settings::material.shininess);
     modelShader.setInt("dirLightSet", settings::setDirectionLight);
@@ -167,31 +168,30 @@ inline void setUniforms(){
     modelShader.setFloat("dirLight.light.specular", settings::dirLight.intensities[0] * settings::dirLight.intensities[3]);
     modelShader.setVec3("dirLight.dir", 0.0f, -5.0f, -6.0f);
 
-   /* lightingshader.setInt("pointLightSet", settings::setPointLight);
-    lightingshader.setVec3("pointLight.light.color", settings::pointLight.lightColor[0], settings::pointLight.lightColor[1],
-                           settings::pointLight.lightColor[2]);
-    lightingshader.setFloat("pointLight.light.ambient", settings::pointLight.intensities[0] * settings::pointLight.intensities[1]);
-    lightingshader.setFloat("pointLight.light.diffuse", settings::pointLight.intensities[0] * settings::pointLight.intensities[2]);
-    lightingshader.setFloat("pointLight.light.specular", settings::pointLight.intensities[0] * settings::pointLight.intensities[3]);
-    lightingshader.setFloat("pointLight.constant", settings::pointLight.attenuation.constant);
-    lightingshader.setFloat("pointLight.linear", settings::pointLight.attenuation.linear);
-    lightingshader.setFloat("pointLight.quadratic", settings::pointLight.attenuation.quadratic);
+    modelShader.setInt("pointLightSet", settings::setPointLight);
+    modelShader.setVec3("pointLight.light.color", settings::pointLight.lightColor[0], settings::pointLight.lightColor[1],
+         settings::pointLight.lightColor[2]);
+    modelShader.setFloat("pointLight.light.ambient", settings::pointLight.intensities[0] * settings::pointLight.intensities[1]);
+    modelShader.setFloat("pointLight.light.diffuse", settings::pointLight.intensities[0] * settings::pointLight.intensities[2]);
+    modelShader.setFloat("pointLight.light.specular", settings::pointLight.intensities[0] * settings::pointLight.intensities[3]);
+    modelShader.setFloat("pointLight.constant", settings::pointLight.attenuation.constant);
+    modelShader.setFloat("pointLight.linear", settings::pointLight.attenuation.linear);
+    modelShader.setFloat("pointLight.quadratic", settings::pointLight.attenuation.quadratic);
 
-    lightingshader.setInt("spotLightSet", settings::setSpotLight);
-    lightingshader.setVec3("spotLight.light.color", settings::spotLight.light.lightColor[0],
+    modelShader.setInt("spotLightSet", settings::setSpotLight);
+    modelShader.setVec3("spotLight.light.color", settings::spotLight.light.lightColor[0],
                            settings::spotLight.light.lightColor[1], settings::spotLight.light.lightColor[2]);
-    lightingshader.setFloat("spotLight.light.ambient",
+    modelShader.setFloat("spotLight.light.ambient",
                             settings::spotLight.light.intensities[0] * settings::spotLight.light.intensities[1]);
-    lightingshader.setFloat("spotLight.light.diffuse",
+    modelShader.setFloat("spotLight.light.diffuse",
                             settings::spotLight.light.intensities[0] * settings::spotLight.light.intensities[2]);
-    lightingshader.setFloat("spotLight.light.specular",
+    modelShader.setFloat("spotLight.light.specular",
                             settings::spotLight.light.intensities[0] * settings::spotLight.light.intensities[3]);
-    lightingshader.setFloat("spotLight.constant", settings::spotLight.light.attenuation.constant);
-    lightingshader.setFloat("spotLight.linear", settings::spotLight.light.attenuation.linear);
-    lightingshader.setFloat("spotLight.quadratic", settings::spotLight.light.attenuation.quadratic);
-    lightingshader.setFloat("spotLight.cutOff", glm::cos(glm::radians(settings::spotLight.innerCone)));
-    lightingshader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(settings::spotLight.outerCone)));
-    lightingshader.setInt("Texture0", 0);*/
+    modelShader.setFloat("spotLight.constant", settings::spotLight.light.attenuation.constant);
+    modelShader.setFloat("spotLight.linear", settings::spotLight.light.attenuation.linear);
+    modelShader.setFloat("spotLight.quadratic", settings::spotLight.light.attenuation.quadratic);
+    modelShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(settings::spotLight.innerCone)));
+    modelShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(settings::spotLight.outerCone)));
 }
 
 int main() {
@@ -255,10 +255,9 @@ int main() {
     ImGui::StyleColorsDark();
     //loading object
     object = Model("models/survival Backpack/backpack.obj");
+    lamp = Model ("models/sphere.obj");
     //compile shaders -----------------------------
     try {
-        //textureShader = Shader("shaders/textureVertex3D.shader", "shaders/textureFragment3D.shader");
-        lightingshader = Shader("shaders/lightingVertex.shader", "shaders/lightingFragment.shader");
         LampShader = Shader("shaders/textureVertex3D.shader", "shaders/lightingLamp.shader");
         modelShader = Shader("shaders/modelVertex.shader","shaders/modelFragment.shader" );
     }
@@ -267,24 +266,8 @@ int main() {
         glfwTerminate();
         return -1;
     }
-    //---------
-    //activate and bind texture units
-    //------------------------------
-   /* glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, textures[0]);
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, textures[1]);
-*/
-    //set the default uniforms for shader
-    //----------------------
-    //old unused shader
-    /*textureShader.use();
-    textureShader.setInt("Texture0", 0);
-    textureShader.setInt("Texture1", 1);
-    textureShader.setFloat("Transparency", 0.3);*/
-
     //-----------------------------------------------------------------------------------
-    //glfw: set the limiter of FPS to the refresh rate of monitor
+    //glfw: set the limiter of FPS to the refresh rate of monitor ( v-sinc)
     glfwSwapInterval(1);
     //enable Z Buffer
     glEnable(GL_DEPTH_TEST);

@@ -10,13 +10,17 @@
 
 Model::Model(std::string path) {
     Assimp::Importer importer;
-    const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate);
+    const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate );
     if (!scene || scene ->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode){
         std::cout << "ERROR::ASSIMP::" << importer.GetErrorString() <<std::endl;
     }
     directory = path.substr(0,path.find_last_of(delimiter));
 #ifdef DEBUG
     std::cout << "number of meshes for model " << path <<':' << scene->mNumMeshes << std::endl;
+    unsigned  int total =0;
+    for (int i =0; i< scene->mNumMeshes;i++)
+        total +=scene->mMeshes[i]->mNumVertices;
+    std::cout << "total count of vertices: " << total << std::endl;
 #endif
     processNode(scene->mRootNode, scene);
 }

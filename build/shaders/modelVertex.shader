@@ -13,7 +13,7 @@ out vec2 TexCoord;
 void main(){
     gl_Position = projection * view * model * vec4(aPos,1.0);
     fragWorldPosition = vec3(model * vec4(aPos,1.0));
-    //scale the normal vector with
+    //scale the normal vector with normal matrix
     normal = mat3(transpose(inverse(model))) * aNormal;
     TexCoord = aTexCoords;
 }

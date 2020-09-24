@@ -7,6 +7,7 @@
 #define GLFWTEST_SETTINGS_H
 #include <imgui/imgui.h>
 #include <glm/vec3.hpp>
+#include <string>
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
  class settings {
@@ -61,7 +62,7 @@ public:
     inline static  float mouseSensitivity = 0.2f;
     inline static  float pitchMax = 89.0f;
     inline static  float pitchMin = -89.0f;
-    inline static  float cameraSpeed = 1.2f ;
+    inline static  float cameraSpeed = 4.0f ;
    inline static  bool movingLamp = true;
    inline static  bool setDirectionLight = true;
    inline static  bool setSpotLight = true;
@@ -91,7 +92,8 @@ private:
         const char *name[] = {"light intensity", "ambient intensity", "diffuse intensity", "specular intensity"};
         //color property
         ImGui::PushID(IDnum++);
-        if (ImGui::ColorEdit3("light color ", pointLight.lightColor))
+        std::string num = std::to_string(IDnum);
+        if (ImGui::ColorEdit3("light color ", light.lightColor))
             changedUniform = true;
         ImGui::PopID();
         //draw intensity properties
@@ -131,7 +133,7 @@ private:
 
         //draw the intensity properties
         for (int i = 0; i < 4; i++) {
-            ImGui::PushID(IDnum);
+            ImGui::PushID(IDnum++);
             if (ImGui::SliderFloat(name[i], &light.light.intensities[i], 0, 1))
                 changedUniform = true;
             ImGui::PopID();
@@ -202,7 +204,7 @@ public:
         if (ImGui::CollapsingHeader("lamp ")) {
 
             if (ImGui::TreeNode("lighting")) {
-                drawLightProperties(pointLight);
+                drawLightProperties(pointLight, true);
                 ImGui::TreePop();
             }
             //position setting of the lamp
