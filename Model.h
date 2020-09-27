@@ -6,6 +6,7 @@
 
 
 #include <assimp/scene.h>
+#include <memory>
 #include "Shader.h"
 #include "Mesh.h"
 
@@ -19,10 +20,13 @@ public:
             mesh.Draw(shader, UniformMaterial);
     }
 private:
-    std::vector<Texture>textures_loaded;
+    std::vector<std::shared_ptr<Texture>>textures_loaded;
+    /// @brief convert the Assimp mesh to Mesh
       Mesh convert(aiMesh *mesh_arg, const aiScene *scene);
-    std::vector<Texture> loadMaterialTextures(aiMaterial *mat, aiTextureType type, const std::string& typeName);
+      /// @brief stored loaded textures for the model
+    std::vector<std::shared_ptr<Texture>> loadMaterialTextures(aiMaterial *mat, aiTextureType type, const std::string& typeName);
     std::vector<Mesh> meshes;
+    /// @brief name of the object
     std::string directory;
 
     void processNode( aiNode *node, const aiScene *scene);

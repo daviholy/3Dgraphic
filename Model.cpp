@@ -7,13 +7,13 @@
 #include <assimp/postprocess.h>
 #include "Model.h"
 #include "TextureBuilder.h"
-
 Model::Model(std::string path) {
     Assimp::Importer importer;
     const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate );
     if (!scene || scene ->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode){
         std::cout << "ERROR::ASSIMP::" << importer.GetErrorString() <<std::endl;
     }
+    //set the name of the model
     directory = path.substr(0,path.find_last_of(delimiter));
 #ifdef DEBUG
     std::cout << "number of meshes for model " << path <<':' << scene->mNumMeshes << std::endl;
@@ -24,9 +24,8 @@ Model::Model(std::string path) {
 #endif
     processNode(scene->mRootNode, scene);
 }
-
 void Model::processNode(aiNode *node,  const aiScene *scene) {
-    //process all meshes of node
+    //process all meshes of curent node
 
     for (unsigned int i=0 ; i <node->mNumMeshes;i++ ){
         aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
@@ -37,10 +36,7 @@ void Model::processNode(aiNode *node,  const aiScene *scene) {
     for (unsigned int i = 0; i < node->mNumChildren;i++)
         processNode(node->mChildren[i],scene);
 }
-///  convert the Assimp mesh to Mesh
-/// \param mesh_arg  assimp mesh
-/// \param scene pointer to scene
-/// \return Mesh of the specified assimp Mesh
+
 Mesh Model::convert(aiMesh *mesh_arg,  const aiScene *scene) {
     //convert vertices-------------------
     bool texture = mesh_arg->mTextureCoords[0];
@@ -69,11 +65,11 @@ Mesh Model::convert(aiMesh *mesh_arg,  const aiScene *scene) {
 
     //convert textures-------------------
     //TODO: just implemented diffuse and specular textures
-    std::vector<Texture> textures;
+    std::vector<std::shared_ptr<Texture>> textures;
     if (mesh_arg->mMaterialIndex){
         aiMaterial *material = scene->mMaterials[mesh_arg->mMaterialIndex];
-        std::vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
-        std::vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
+        std::vector<std::shared_ptr<Texture>> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
+        std::vector<std::shared_ptr<Texture>> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
         textures = diffuseMaps;
         //TODO:copying vector to other vector which is O(n)!!!! (it dont have much big impact now, because the number of actual Textures are low)
         textures.insert(textures.end(),specularMaps.begin(),specularMaps.end());
@@ -82,8 +78,8 @@ Mesh Model::convert(aiMesh *mesh_arg,  const aiScene *scene) {
     return Mesh(vertices,indices,textures);
 }
 
-std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, const std::string& typeName) {
-    std::vector<Texture> textures;
+std::vector<std::shared_ptr<Texture>> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, const std::string& typeName) {
+    std::vector<std::shared_ptr<Texture>> textures;
     TextureBuilder texturebuilder("");
     texturebuilder.SetFiltering(GL_LINEAR,GL_NEAREST);
     for (unsigned int i = 0; i < mat->GetTextureCount(type); i++) {
@@ -91,12 +87,11 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType 
         bool  skip =false;
         mat->GetTexture(type, i, &str);
         //checking if the texture isn't loaded------------------------
-       for(Texture  texture :textures_loaded){
-            if (texture.name == str.C_Str()){
+       for(int i =0 ; i < textures_loaded.size();i++){
+            if (textures_loaded[i]->name == str.C_Str()){
                 //found identical texture
                 skip = true;
-                //TODO: copying whole Texture object, do just copy of address?
-                textures.push_back(texture);
+                textures.push_back(textures_loaded[i]);
                 break;
             }
         }
@@ -110,8 +105,8 @@ std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType 
             texture.type = typeName;
             //TODO: comparing whole given path, isn't comparing names sufficient?
             texture.name = str.C_Str();
-            textures.push_back(texture);
-            textures_loaded.push_back(texture);
+            textures.push_back(std::make_shared<Texture>(texture));
+            textures_loaded.push_back(textures[textures.size() - 1]);
             #ifdef DEBUG
             std::cout << "loaded texture from " << directory + '/' + str.C_Str() << std::endl;
             #endif
