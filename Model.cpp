@@ -37,6 +37,10 @@ void Model::processNode(aiNode *node,  const aiScene *scene) {
     for (unsigned int i = 0; i < node->mNumChildren;i++)
         processNode(node->mChildren[i],scene);
 }
+///  convert the Assimp mesh to Mesh
+/// \param mesh_arg  assimp mesh
+/// \param scene pointer to scene
+/// \return Mesh of the specified assimp Mesh
 Mesh Model::convert(aiMesh *mesh_arg,  const aiScene *scene) {
     //convert vertices-------------------
     bool texture = mesh_arg->mTextureCoords[0];

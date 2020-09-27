@@ -9,59 +9,59 @@
 #include<stb_image.h>
 
 TextureBuilder::TextureBuilder(const std::string& Source){
-    _Source = Source;
+    Source_ = Source;
 }
 void TextureBuilder::SetFiltering(const GLuint MaxFiltering, const GLuint MinFiltering) {
-    _MaxFiltering = MaxFiltering;
-    _MinFiltering = MinFiltering;
+    MaxFiltering_ = MaxFiltering;
+    MinFiltering_ = MinFiltering;
 }
 void TextureBuilder::SetSource(const std::string& source) {
-    _Source = source;
+    Source_ = source;
 }
 void TextureBuilder::SetRepeat(const int Repeat) {
-    _Repeat = Repeat;
+    Repeat_ = Repeat;
 }
 void TextureBuilder::SetColorMode(const GLuint ColorMode) {
-    _ColorMode = ColorMode;
+    ColorMode_ = ColorMode;
 }
 void TextureBuilder::Reset() {
-    _Source = nullptr;
-    _Repeat = GL_REPEAT;
-    _MinFiltering = GL_LINEAR;
-    _MaxFiltering = GL_NEAREST_MIPMAP_NEAREST;
-    _Target = GL_TEXTURE_2D;
-    _ColorMode= GL_RGB;
-    _internalColorMode = GL_RGB;
+    Source_ = nullptr;
+    Repeat_ = GL_REPEAT;
+    MinFiltering_ = GL_LINEAR;
+    MaxFiltering_ = GL_NEAREST_MIPMAP_NEAREST;
+    Target_ = GL_TEXTURE_2D;
+    ColorMode_= GL_RGB;
+    internalColorMode_ = GL_RGB;
 }
 void TextureBuilder::SetYflip(const bool value) {
     _Yflip = value;
 }
 //TODO:: delete the image from memory after sending it to GPU, implement some memory buffer
 GLuint TextureBuilder::Build() {
-    if (_Source.empty())
+    if (Source_.empty())
         throw std::logic_error ("Didn't specified source");
     stbi_set_flip_vertically_on_load(_Yflip);
     GLuint ID;
     glGenTextures(1,&ID);
     glBindTexture(GL_TEXTURE_2D,ID);
     //use repeat wrapping
-    glTexParameteri(_Target, GL_TEXTURE_WRAP_S, _Repeat);
-    glTexParameteri(_Target, GL_TEXTURE_WRAP_T, _Repeat);
+    glTexParameteri(Target_, GL_TEXTURE_WRAP_S, Repeat_);
+    glTexParameteri(Target_, GL_TEXTURE_WRAP_T, Repeat_);
     //use linear filtering
-    glTexParameteri(_Target, GL_TEXTURE_MIN_FILTER, _MinFiltering);
-    glTexParameteri(_Target, GL_TEXTURE_MAG_FILTER, _MaxFiltering);
+    glTexParameteri(Target_, GL_TEXTURE_MIN_FILTER, MinFiltering_);
+    glTexParameteri(Target_, GL_TEXTURE_MAG_FILTER, MaxFiltering_);
     int textureWidth, textureHeight, textureNrChannels;
-    unsigned char *textureData = stbi_load(_Source.c_str(),&textureWidth,&textureHeight,&textureNrChannels,0);
+    unsigned char *textureData = stbi_load(Source_.c_str(), &textureWidth, &textureHeight, &textureNrChannels, 0);
     if (textureData) {
-        glTexImage2D(_Target, 0, _internalColorMode, textureWidth, textureHeight, 0, _ColorMode, GL_UNSIGNED_BYTE, textureData);
-        glGenerateMipmap(_Target);
+        glTexImage2D(Target_, 0, internalColorMode_, textureWidth, textureHeight, 0, ColorMode_, GL_UNSIGNED_BYTE, textureData);
+        glGenerateMipmap(Target_);
     }
     else
-        throw std::ios_base::failure ("can't load texture : [" + _Source + "]");
+        throw std::ios_base::failure ("can't load texture : [" + Source_ + "]");
     stbi_image_free(textureData);
     return ID;
 }
 
 void TextureBuilder::SetInternalColorMode(GLuint ColorMode) {
-_internalColorMode = ColorMode;
+    internalColorMode_ = ColorMode;
 }
