@@ -14,7 +14,7 @@ Model::Model(std::string path) {
         std::cout << "ERROR::ASSIMP::" << importer.GetErrorString() <<std::endl;
     }
     //set the name of the model
-    directory = path.substr(0,path.find_last_of(delimiter));
+    directory_ = path.substr(0, path.find_last_of(delimiter));
 #ifdef DEBUG
     std::cout << "number of meshes for model " << path <<':' << scene->mNumMeshes << std::endl;
     unsigned  int total =0;
@@ -29,7 +29,7 @@ void Model::processNode(aiNode *node,  const aiScene *scene) {
 
     for (unsigned int i=0 ; i <node->mNumMeshes;i++ ){
         aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
-        meshes.push_back(convert(mesh,  scene));
+        meshes_.push_back(convert(mesh, scene));
     }
 
     //procces all other children nodes
@@ -87,11 +87,11 @@ std::vector<std::shared_ptr<Texture>> Model::loadMaterialTextures(aiMaterial *ma
         bool  skip =false;
         mat->GetTexture(type, i, &str);
         //checking if the texture isn't loaded------------------------
-       for(int i =0 ; i < textures_loaded.size();i++){
-            if (textures_loaded[i]->name == str.C_Str()){
+       for(int i =0 ; i < textures_loaded_.size(); i++){
+            if (textures_loaded_[i]->name == str.C_Str()){
                 //found identical texture
                 skip = true;
-                textures.push_back(textures_loaded[i]);
+                textures.push_back(textures_loaded_[i]);
                 break;
             }
         }
@@ -99,16 +99,16 @@ std::vector<std::shared_ptr<Texture>> Model::loadMaterialTextures(aiMaterial *ma
 
         //loading the texture if it wasn't found----------------------
         if (!skip) {
-            texturebuilder.SetSource(directory + '/' + str.C_Str());
+            texturebuilder.SetSource(directory_ + '/' + str.C_Str());
             Texture texture;
             texture.id = texturebuilder.Build();
             texture.type = typeName;
             //TODO: comparing whole given path, isn't comparing names sufficient?
             texture.name = str.C_Str();
             textures.push_back(std::make_shared<Texture>(texture));
-            textures_loaded.push_back(textures[textures.size() - 1]);
+            textures_loaded_.push_back(textures[textures.size() - 1]);
             #ifdef DEBUG
-            std::cout << "loaded texture from " << directory + '/' + str.C_Str() << std::endl;
+            std::cout << "loaded texture from " << directory_ + '/' + str.C_Str() << std::endl;
             #endif
         }
         //-----------------------------------------------------------------

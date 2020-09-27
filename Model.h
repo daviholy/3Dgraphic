@@ -16,18 +16,18 @@ public:
     Model()=default;
     Model(std::string path);
     void Draw(const Shader &shader, const std::string &UniformMaterial){
-        for (Mesh mesh : meshes)
+        for (Mesh mesh : meshes_)
             mesh.Draw(shader, UniformMaterial);
     }
 private:
-    std::vector<std::shared_ptr<Texture>>textures_loaded;
+    std::vector<std::shared_ptr<Texture>>textures_loaded_;
     /// @brief convert the Assimp mesh to Mesh
       Mesh convert(aiMesh *mesh_arg, const aiScene *scene);
       /// @brief stored loaded textures for the model
     std::vector<std::shared_ptr<Texture>> loadMaterialTextures(aiMaterial *mat, aiTextureType type, const std::string& typeName);
-    std::vector<Mesh> meshes;
+    std::vector<Mesh> meshes_;
     /// @brief name of the object
-    std::string directory;
+    std::string directory_;
 
     void processNode( aiNode *node, const aiScene *scene);
 };
