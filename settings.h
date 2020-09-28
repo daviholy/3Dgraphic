@@ -10,7 +10,7 @@
 #include <string>
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
- class settings {
+class settings {
 private:
 /*
  * ==========================
@@ -59,6 +59,7 @@ public:
 
     inline static  unsigned int scrWidth = 400;
     inline static  unsigned int scrHeight = 400;
+    inline static  float FOV =45;
     inline static  float mouseSensitivity = 0.2f;
     inline static  float pitchMax = 89.0f;
     inline static  float pitchMin = -89.0f;
@@ -75,6 +76,7 @@ public:
     inline static float lightCenter[3] = {0, 0, 0};
 
     inline static int IDnum = 0;
+
 //=======================================================================================
 private:
     inline static void HelpMarker(const char *desc) {

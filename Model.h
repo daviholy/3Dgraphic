@@ -11,6 +11,7 @@
 #include "Mesh.h"
 
 constexpr char delimiter = '/';
+/// @brief class representing of the loaded Model from file passed to constructor as string path
 class Model {
 public:
     Model()=default;

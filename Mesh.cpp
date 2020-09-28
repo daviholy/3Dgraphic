@@ -38,7 +38,7 @@ glVertexAttribPointer(2,2, GL_FLOAT, GL_FALSE, sizeof(Vertex),(void*)offsetof(Ve
 glBindVertexArray(0);
 }
 void Mesh::Draw(const Shader &shader, const std::string& UniformMaterial) {
-//using uniform naming conventions {type}{nr} nr= 0, 1, 2......
+//using uniform naming conventions UniformMaterial.{type}{nr} nr= 0, 1, 2......
 unsigned int diffuseNr = 0;
 unsigned int specularNr =0;
 //setting texture units---------------
