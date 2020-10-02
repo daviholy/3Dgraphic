@@ -10,12 +10,12 @@
 #include "Object.h"
 #include "Camera.h"
 #include "settings.h"
-
+#include "control.h"
 /// @brief class representing scene (representing the final drawing scene with defined cameras and objects)
 class Scene {
 public:
-    Scene(const std::shared_ptr<Camera>& camera_arg);
-    Scene(const std::vector<std::shared_ptr<Camera>>& cameras_arg, const unsigned int activeCamera_arg);
+    Scene(const std::shared_ptr<Camera>& camera_arg, Control &control_arg);
+    Scene(const std::vector<std::shared_ptr<Camera>>& cameras_arg, Control &control_arg, unsigned int activeCamera_arg);
     /// @brief draw all the objects in the scene
     void draw(const std::string& uniformMaterial_arg = "material.");
     void addObject(const std::shared_ptr<Object> &object_arg);
@@ -38,7 +38,8 @@ std::vector<std::shared_ptr<Object>> objects_;
 unsigned int activeCamera_;
 std::vector<std::shared_ptr<Camera>> cameras_;
 glm::mat4 projection;
+//TODO; decouple with control
+Control control_;
 };
-
 
 #endif //GLFWTEST_SCENE_H

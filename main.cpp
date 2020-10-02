@@ -14,29 +14,30 @@
  */
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <thread>
 #include <cmath>
 #include <iostream>
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 #include <fstream>
 #include "settings.h"
 #include "Shader.h"
-#include "Camera.h"
-#include "Model.h"
-#include "Object.h"
 #include "Scene.h"
 
-//headers of functions used in the file
-//------------------------------------
+void (*draw) (Scene& scene, Shader &shader) ;
+
+void mouse_callback(GLFWwindow *window, double xPos, double yPos);
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
-
-void mouse_callback(GLFWwindow *window, double xpos, double ypos);
-
-void processInput(GLFWwindow *window, Scene &scene);
+void  inline static togglemenu(GLFWwindow *window);
+void inline static closeWindow(GLFWwindow *window);
+//void processInput(GLFWwindow *window, Scene &scene);
 
 void drawCubeLights(Scene &scene, Shader &shader);
-
+//global variables used across functions
+//--------------------------------------
+float deltaTime = 0.0;
+float deqree = 0;
+bool RawInput = false;
+glm::vec3 lightPos = glm::vec3(1.2, 0, 2.0);
+std::shared_ptr<Camera> activeCamera ;
 #ifdef DEBUG
 //debug message function for opengl
 void APIENTRY glDebugOutput(GLenum source,GLenum type,unsigned int id,GLenum severity,GLsizei length,const char*message,const void*userParam) {
@@ -117,14 +118,6 @@ void APIENTRY glDebugOutput(GLenum source,GLenum type,unsigned int id,GLenum sev
 
 //global variables used across functions
 //--------------------------------------
-float deltaTime = 0.0;
-float deqree = 0;
-bool RawInput = false;
-glm::vec3 lightPos = glm::vec3(1.2, 0, 2.0);
-std::shared_ptr<Camera> activeCamera ;
-//for saving cursor position
-double xPos,yPos;
-void (*draw) (Scene&, Shader &shader) = drawCubeLights;
 
 void drawCubeLights(Scene &scene_arg, Shader &shader) {
     glm::mat4 model(1.0f), projection = glm::perspective(glm::radians(settings::FOV), (float) settings::scrWidth / settings::scrHeight, 0.1f, 100.0f);
@@ -189,6 +182,7 @@ inline void setUniforms(Shader &shader){
 }
 
 int main() {
+    draw = drawCubeLights;
     // glfw: initialize and configure
     // ------------------------------
     glfwInit();
@@ -262,14 +256,22 @@ int main() {
     //setting camera
     std::shared_ptr<Camera> camera = std::make_shared<Camera>(-90, -36, glm::vec3(0.0, 4.0, 3.5));
     activeCamera = camera;
+    //settings controls---------------------------
+    Control control(activeCamera);
+    control.cameraCommands.emplace_back(CameraCommand(Forward,GLFW_KEY_W));
+    control.cameraCommands.emplace_back(CameraCommand(Left,GLFW_KEY_A));
+    control.cameraCommands.emplace_back(CameraCommand(Backward,GLFW_KEY_S));
+    control.cameraCommands.emplace_back(CameraCommand(RightMovement,GLFW_KEY_D));
+    control.commands.emplace_back(Command(GLFW_KEY_M, togglemenu));
+    control.commands.emplace_back(Command(GLFW_KEY_ESCAPE, closeWindow));
+    //---------------------------------------------
     //loading objects
    std::shared_ptr<Object> object = std::make_shared<Object>("models/survival Backpack/backpack.obj", modelShader);
     //lamp = Model ("models/sphere.obj");
     //loading scene with single object
-    Scene scene (camera);
+    Scene scene (camera, control);
     scene.addObject(object);
-    for (float i = 1 ; i < 1 ; i++)
-    scene.addObject(std::make_shared<Object>(object->model,modelShader,glm::vec3 (4 * i,0.0f,0.0f)));
+    //scene.addObject(std::make_shared<Object>(object->model,modelShader,glm::vec3 (4 * i,0.0f,0.0f)));
     //glfw: set the limiter of FPS to the refresh rate of monitor ( v-sinc)
     glfwSwapInterval(1);
     //enable Z Buffer
@@ -281,7 +283,7 @@ int main() {
         // calculate time logic
         //--------------------
         double currentFrame = glfwGetTime();
-        deltaTime = currentFrame - lastFrame;
+        float deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
         //calculate position of the lamp
         //------------------------------
@@ -292,7 +294,8 @@ int main() {
         }
         // input
         // -----
-        processInput(window,scene);
+        //processInput(window,scene);
+        control.update(window, deltaTime);
 
         // set the background color and clear the buffer with it
         // -----------------------------------------------------
@@ -329,7 +332,40 @@ int main() {
     glfwTerminate();
 }
 
-void processInput(GLFWwindow *window, Scene &scene) {
+// callback function called  when the mouse position change
+//---------------------------------------------------------
+void mouse_callback(GLFWwindow *window, double xPos, double yPos) {
+    activeCamera->ProccesMouseMovement(xPos, yPos);
+}
+
+// callback function called  when size of the window change
+//---------------------------------------------------------
+void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
+    glViewport(0, 0, width, height);
+}
+/// @brief  to toggle visibility of menu
+void  inline static togglemenu(GLFWwindow *window){
+    static double xPos,yPos;
+    if (settings::hideGui) {
+        settings::hideGui = false;
+        glfwGetCursorPos(window, &xPos, &yPos);
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        //disable camera movement
+        glfwSetCursorPosCallback(window, nullptr);
+    } else {
+        settings::hideGui = true;
+        glfwSetCursorPos(window,xPos,yPos);
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        //enable camera movement
+        glfwSetCursorPosCallback(window, mouse_callback);
+    }
+    std::this_thread::sleep_for(std::chrono::milliseconds(60));
+}
+
+void inline static closeWindow(GLFWwindow *window){
+    glfwSetWindowShouldClose(window, GLFW_TRUE);
+}
+/*void processInput(GLFWwindow *window, Scene &scene) {
     //TODO: implement better input system then naively putting thread to sleep
 
     // camera control----------------------------------------------------
@@ -348,35 +384,11 @@ void processInput(GLFWwindow *window, Scene &scene) {
     }
     //for debug purpose
     if (glfwGetKey(window, GLFW_KEY_P)) {
-        std::cout << scene.activeCamera->Yaw << " " << scene.activeCamera->Pitch << std::endl << scene.activeCamera->Position.x << " " << scene.activeCamera->Position.y
+        std::cout << scene.activeCamera->Yaw << " " << scene.activeCamera->Pitch << std::endl
+                  << scene.activeCamera->Position.x << " " << scene.activeCamera->Position.y
                   << " " << scene.activeCamera->Position.z << std::endl;
     }
     if (glfwGetKey(window, GLFW_KEY_M)) {
-        if (settings::hideGui) {
-            settings::hideGui = false;
-            glfwGetCursorPos(window, &xPos, &yPos);
-            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-            //disable camera movement
-            glfwSetCursorPosCallback(window, nullptr);
-        } else {
-            settings::hideGui = true;
-            glfwSetCursorPos(window,xPos,yPos);
-            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-            //enable camera movement
-            glfwSetCursorPosCallback(window, mouse_callback);
-        }
-        std::this_thread::sleep_for(std::chrono::milliseconds(60));
+        settings::togglemenu(window);
     }
-}
-
-// callback function called  when the mouse position change
-//---------------------------------------------------------
-void mouse_callback(GLFWwindow *window, double xPos, double yPos) {
-    activeCamera->ProccesMouseMovement(xPos, yPos);
-}
-
-// callback function called  when size of the window change
-//---------------------------------------------------------
-void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
-    glViewport(0, 0, width, height);
-}
+}*/

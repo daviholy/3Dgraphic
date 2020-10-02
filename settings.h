@@ -8,8 +8,12 @@
 #include <imgui/imgui.h>
 #include <glm/vec3.hpp>
 #include <string>
+#include <thread>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
+
 class settings {
 private:
 /*
@@ -176,7 +180,9 @@ private:
             changedUniform = true;
 
     }
+
 public:
+
 /*================================================
  * ==== static function for drawing the menu======
  * ===============================================

@@ -4,9 +4,8 @@
 
 #include <glm/ext/matrix_transform.hpp>
 #include "Camera.h"
-#include "glm/glm.hpp"
-#include <GLFW/glfw3.h>
 #include "settings.h"
+
 Camera::Camera(const float yaw, const float pitch, const glm::vec3 position, const glm::vec3 up) {
     Yaw = yaw;
     Pitch = pitch;
