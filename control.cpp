@@ -2,6 +2,7 @@
 #include <memory>
 #include <GLFW/glfw3.h>
 #include <vector>
+#include <iostream>
 #include "control.h"
 //
 // Created by davih on 28.09.2020.
@@ -24,6 +25,7 @@ void CameraCommand::execute( GLFWwindow *window, const float deltaTime_arg, cons
 Command::Command(const int key_arg, void (*executiveFunction_arg)(GLFWwindow *)) {
     key_ =key_arg;
     executiveFunction_ = executiveFunction_arg;
+    released_ = true;
 }
 
 const int Command::getKey() {
@@ -32,7 +34,7 @@ const int Command::getKey() {
 
 void Command::execute(GLFWwindow *window) {
     if (glfwGetKey(window,key_))
-        executiveFunction_(window);
+            executiveFunction_(window);
 }
 
 void Control::update(GLFWwindow *window, float deltaTime_arg) {

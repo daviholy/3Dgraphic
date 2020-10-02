@@ -28,6 +28,7 @@ void mouse_callback(GLFWwindow *window, double xPos, double yPos);
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void  inline static togglemenu(GLFWwindow *window);
 void inline static closeWindow(GLFWwindow *window);
+void inline setKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 //void processInput(GLFWwindow *window, Scene &scene);
 
 void drawCubeLights(Scene &scene, Shader &shader);
@@ -262,8 +263,9 @@ int main() {
     control.cameraCommands.emplace_back(CameraCommand(Left,GLFW_KEY_A));
     control.cameraCommands.emplace_back(CameraCommand(Backward,GLFW_KEY_S));
     control.cameraCommands.emplace_back(CameraCommand(RightMovement,GLFW_KEY_D));
-    control.commands.emplace_back(Command(GLFW_KEY_M, togglemenu));
+   // control.commands.emplace_back(Command(GLFW_KEY_M, togglemenu));
     control.commands.emplace_back(Command(GLFW_KEY_ESCAPE, closeWindow));
+    glfwSetKeyCallback(window,setKeyCallback);
     //---------------------------------------------
     //loading objects
    std::shared_ptr<Object> object = std::make_shared<Object>("models/survival Backpack/backpack.obj", modelShader);
@@ -292,9 +294,9 @@ int main() {
             lightPos.y = settings::lightCenter[1];
             lightPos.z = settings::lightCenter[2] + sin(glfwGetTime() * settings::speed) * settings::radius;
         }
-        // input
+        // in engine input
         // -----
-        //processInput(window,scene);
+        if (settings::hideGui)
         control.update(window, deltaTime);
 
         // set the background color and clear the buffer with it
@@ -361,7 +363,11 @@ void  inline static togglemenu(GLFWwindow *window){
     }
     std::this_thread::sleep_for(std::chrono::milliseconds(60));
 }
-
+/// @brief callback handling input in menu
+void inline setKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods){
+    if ( key == GLFW_KEY_M && action == GLFW_PRESS)
+        togglemenu(window);
+}
 void inline static closeWindow(GLFWwindow *window){
     glfwSetWindowShouldClose(window, GLFW_TRUE);
 }

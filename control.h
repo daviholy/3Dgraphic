@@ -23,6 +23,7 @@ public:
 private:
     void (*executiveFunction_ ) (GLFWwindow *window);
     int key_;
+    bool released_;
 };
 
 class Control{
