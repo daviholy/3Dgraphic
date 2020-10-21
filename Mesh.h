@@ -10,7 +10,7 @@
 #include "Vertex.h"
 #include "Texture.h"
 #include "Shader.h"
-
+#include <memory>
 class Mesh {
 public:
     std::vector<Vertex> vertices;

@@ -116,8 +116,6 @@ void APIENTRY glDebugOutput(GLenum source,GLenum type,unsigned int id,GLenum sev
     std::cout << std::endl;
 }
 #endif
-
-//global variables used across functions
 //--------------------------------------
 
 void drawCubeLights(Scene &scene_arg, Shader &shader) {
@@ -361,7 +359,6 @@ void  inline static togglemenu(GLFWwindow *window){
         //enable camera movement
         glfwSetCursorPosCallback(window, mouse_callback);
     }
-    std::this_thread::sleep_for(std::chrono::milliseconds(60));
 }
 /// @brief callback handling input in menu
 void inline setKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods){
@@ -371,30 +368,3 @@ void inline setKeyCallback(GLFWwindow* window, int key, int scancode, int action
 void inline static closeWindow(GLFWwindow *window){
     glfwSetWindowShouldClose(window, GLFW_TRUE);
 }
-/*void processInput(GLFWwindow *window, Scene &scene) {
-    //TODO: implement better input system then naively putting thread to sleep
-
-    // camera control----------------------------------------------------
-    if (glfwGetKey(window, GLFW_KEY_W))
-        scene.activeCamera->ProccesCameraMovement(Forward, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_S))
-        scene.activeCamera->ProccesCameraMovement(Backward, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_A))
-        scene.activeCamera->ProccesCameraMovement(Left, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_D))
-        scene.activeCamera->ProccesCameraMovement(RightMovement, deltaTime);
-    //-------------------------------------------------------------------
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE)) {
-        //closing window
-        glfwSetWindowShouldClose(window, GLFW_TRUE);
-    }
-    //for debug purpose
-    if (glfwGetKey(window, GLFW_KEY_P)) {
-        std::cout << scene.activeCamera->Yaw << " " << scene.activeCamera->Pitch << std::endl
-                  << scene.activeCamera->Position.x << " " << scene.activeCamera->Position.y
-                  << " " << scene.activeCamera->Position.z << std::endl;
-    }
-    if (glfwGetKey(window, GLFW_KEY_M)) {
-        settings::togglemenu(window);
-    }
-}*/

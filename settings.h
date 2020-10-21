@@ -243,4 +243,4 @@ public:
         IDnum = 0;
     }
 };
-#endif GLFWTEST_SETTINGS_H
+#endif //GLFWTEST_SETTINGS_H

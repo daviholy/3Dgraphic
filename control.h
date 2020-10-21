@@ -31,7 +31,7 @@ public:
      std::shared_ptr<Camera> activeCamera;
     std::vector<CameraCommand> cameraCommands;
     std::vector<Command> commands;
-    Control (std::shared_ptr<Camera> activeCamera_arg);
+    explicit Control (std::shared_ptr<Camera> activeCamera_arg);
     void update(GLFWwindow *window,float deltaTime_arg);
 private:
     Control()= default;
