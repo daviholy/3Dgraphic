@@ -6,6 +6,7 @@
 #define GLFWTEST_CAMERA_H
 
 #include <glm/glm.hpp>
+#include "Object.h"
 
 enum CameraMovement {
     Forward,
@@ -24,10 +25,11 @@ private:
     glm::vec3 Right{};
     glm::vec3 WorldUp{};
     bool firstMouseMove = true;
+    Object *bindObject;
 
 public:
     Camera(float yaw, float pitch, glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f),
-           glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f));
+           glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), Object *object_arg = nullptr);
 
     glm::mat4 GetViewMatrix() const;
 

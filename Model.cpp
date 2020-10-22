@@ -7,7 +7,7 @@
 #include <assimp/postprocess.h>
 #include "Model.h"
 #include "TextureBuilder.h"
-Model::Model(std::string path) {
+Model::Model(const std::string& path) {
     Assimp::Importer importer;
     const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate );
     if (!scene || scene ->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode){
@@ -15,6 +15,7 @@ Model::Model(std::string path) {
     }
     //set the name of the model
     directory_ = path.substr(0, path.find_last_of(delimiter));
+
 #ifdef DEBUG
     std::cout << "number of meshes for model " << path <<':' << scene->mNumMeshes << std::endl;
     unsigned  int total =0;
@@ -22,8 +23,10 @@ Model::Model(std::string path) {
         total +=scene->mMeshes[i]->mNumVertices;
     std::cout << "total count of vertices: " << total << std::endl;
 #endif
+
     processNode(scene->mRootNode, scene);
 }
+
 void Model::processNode(aiNode *node,  const aiScene *scene) {
     //process all meshes of curent node
 
@@ -65,11 +68,11 @@ Mesh Model::convert(aiMesh *mesh_arg,  const aiScene *scene) {
 
     //convert textures-------------------
     //TODO: just implemented diffuse and specular textures
-    std::vector<std::shared_ptr<Texture>> textures;
+    std::vector<Texture> textures;
     if (mesh_arg->mMaterialIndex){
         aiMaterial *material = scene->mMaterials[mesh_arg->mMaterialIndex];
-        std::vector<std::shared_ptr<Texture>> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse");
-        std::vector<std::shared_ptr<Texture>> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
+        std::vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse",TextureType::diffuse);
+        std::vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular",TextureType::specular);
         textures = diffuseMaps;
         //TODO:copying vector to other vector which is O(n)!!!! (it dont have much big impact now, because the number of actual Textures are low)
         textures.insert(textures.end(),specularMaps.begin(),specularMaps.end());
@@ -77,9 +80,9 @@ Mesh Model::convert(aiMesh *mesh_arg,  const aiScene *scene) {
     //------------------------------------
     return Mesh(vertices,indices,textures);
 }
-
-std::vector<std::shared_ptr<Texture>> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, const std::string& typeName) {
-    std::vector<std::shared_ptr<Texture>> textures;
+//TODO: checking loaded textures in model, possible duplicate in another model
+std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, const std::string& typeName, const TextureType type_arg) {
+    std::vector<Texture> textures;
     TextureBuilder texturebuilder("");
     texturebuilder.SetFiltering(GL_LINEAR,GL_NEAREST);
     for (unsigned int i = 0; i < mat->GetTextureCount(type); i++) {
@@ -88,7 +91,7 @@ std::vector<std::shared_ptr<Texture>> Model::loadMaterialTextures(aiMaterial *ma
         mat->GetTexture(type, i, &str);
         //checking if the texture isn't loaded------------------------
        for(int i =0 ; i < textures_loaded_.size(); i++){
-            if (textures_loaded_[i]->name == str.C_Str()){
+            if (textures_loaded_[i].name == str.C_Str()){
                 //found identical texture
                 skip = true;
                 textures.push_back(textures_loaded_[i]);
@@ -102,10 +105,10 @@ std::vector<std::shared_ptr<Texture>> Model::loadMaterialTextures(aiMaterial *ma
             texturebuilder.SetSource(directory_ + '/' + str.C_Str());
             Texture texture;
             texture.id = texturebuilder.Build();
-            texture.type = typeName;
+            texture.type = type_arg;
             //TODO: comparing whole given path, isn't comparing names sufficient?
             texture.name = str.C_Str();
-            textures.push_back(std::make_shared<Texture>(texture));
+            textures.push_back(texture);
             textures_loaded_.push_back(textures[textures.size() - 1]);
             #ifdef DEBUG
             std::cout << "loaded texture from " << directory_ + '/' + str.C_Str() << std::endl;

@@ -13,12 +13,12 @@ CameraCommand::CameraCommand(const CameraMovement movement_arg, const int key_ar
     key_ = key_arg;
 }
 
-void CameraCommand::execute( GLFWwindow *window, const float deltaTime_arg, const std::shared_ptr<Camera> &activeCamera_arg) {
+void CameraCommand::execute( GLFWwindow *window, const float deltaTime_arg, Camera &activeCamera_arg) {
     if (glfwGetKey(window,key_) == GLFW_PRESS)
-        activeCamera_arg->ProccesCameraMovement(movement_,deltaTime_arg);
+        activeCamera_arg.ProccesCameraMovement(movement_,deltaTime_arg);
 }
 
- int const CameraCommand::getKey() {
+ int CameraCommand::getKey() const {
     return key_;
 }
 
@@ -28,7 +28,7 @@ Command::Command(const int key_arg, void (*executiveFunction_arg)(GLFWwindow *))
     released_ = true;
 }
 
-const int Command::getKey() {
+int Command::getKey() const {
     return key_;
 }
 
@@ -39,11 +39,11 @@ void Command::execute(GLFWwindow *window) {
 
 void Control::update(GLFWwindow *window, float deltaTime_arg) {
     for (CameraCommand camera : cameraCommands)
-        camera.execute(window,deltaTime_arg,activeCamera);
+        camera.execute(window,deltaTime_arg,*activeCamera);
     for (Command command : commands)
         command.execute(window);
 }
 
-Control::Control(std::shared_ptr<Camera> activeCamera_arg) {
-    activeCamera = activeCamera_arg;
+Control::Control(Camera &activeCamera_arg) {
+    activeCamera = &activeCamera_arg;
 }

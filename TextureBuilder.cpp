@@ -3,11 +3,9 @@
 //
 
 #include <iostream>
-#include <stb_image.h>
 #include "TextureBuilder.h"
 #define STB_IMAGE_IMPLEMENTATION
-#include<stb_image.h>
-
+#include <stb_image.h>
 TextureBuilder::TextureBuilder(const std::string& Source){
     Source_ = Source;
 }

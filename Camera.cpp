@@ -6,11 +6,12 @@
 #include "Camera.h"
 #include "settings.h"
 
-Camera::Camera(const float yaw, const float pitch, const glm::vec3 position, const glm::vec3 up) {
+Camera::Camera(const float yaw, const float pitch, const glm::vec3 position, const glm::vec3 up, Object *object_arg) {
     Yaw = yaw;
     Pitch = pitch;
     Position = position;
     WorldUp = up;
+    bindObject = object_arg;
     UpdateCameraVectors();
 }
 void Camera::UpdateCameraVectors() {
@@ -52,14 +53,22 @@ void Camera::ProccesCameraMovement(const CameraMovement movement, const float de
     switch (movement) {
         case Forward:
             Position += Front * velocity;
+            if (bindObject != nullptr)
+                bindObject->setPosition(Position);
             break;
         case Backward:
             Position -= Front * velocity;
+            if (bindObject != nullptr)
+                bindObject->setPosition(Position);
             break;
         case Left:
             Position -= Right * velocity;
+            if (bindObject != nullptr)
+                bindObject->setPosition(Position);
             break;
         case RightMovement:
             Position += Right * velocity;
+            if (bindObject != nullptr)
+                bindObject->setPosition(Position);
     }
 }

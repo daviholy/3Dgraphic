@@ -12,10 +12,10 @@
 public:
     /// @brief default empty game object
     Object()=default;
-    Object(const std::shared_ptr<Model>& model_arg, const std::shared_ptr<Shader> &shader_arg, const glm::vec3 position_arg = glm::vec3 (0.0f,0.0f,0.0f),
+    Object(std::shared_ptr<Model> model_arg, const Shader &shader_arg, const glm::vec3 position_arg = glm::vec3 (0.0f,0.0f,0.0f),
            const glm::vec3 size_arg = glm::vec3(1.0f));
 
-     Object(const std::string &path_arg, std::shared_ptr<Shader> &shader_arg, const glm::vec3 position_arg = glm::vec3 (0.0f,0.0f,0.0f),
+     Object(const std::string &path_arg, Shader &shader_arg, const glm::vec3 position_arg = glm::vec3 (0.0f,0.0f,0.0f),
             const glm::vec3 size_arg = glm::vec3(1.0f)) :
              Object(std::make_shared<Model>(Model(path_arg)),shader_arg,position_arg, size_arg){};
 
@@ -30,14 +30,14 @@ public:
      void setPosition(const glm::vec3 &position);
 
      /// @brief shader binded to the object
-    std::shared_ptr<Shader> shader;
+     Shader shader;
      std::shared_ptr<Model> model;
 private:
-    inline void setModelmatrix_();
+    inline void setModelMatrix_();
      /// @brief size multiplier of original object
-     glm::vec3 size_;
-     glm::vec3 position_;
-     glm::mat4 modelMatrix_;
+     glm::vec3 size_{};
+     glm::vec3 position_{};
+     glm::mat4 modelMatrix_{};
 };
 
 #endif //GLFWTEST_OBJECT_H

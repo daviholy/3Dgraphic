@@ -15,12 +15,12 @@ class Mesh {
 public:
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
-    std::vector<std::shared_ptr<Texture>> textures;
+    std::vector<Texture> textures;
     /// @brief convert from aiMesh (Assimp structure) to our mesh Structure
     /// @param shader shader to use
     /// @param UniformMaterial basic name of texture uniforms (used convention UniformMaterial + name + number)
     void Draw(const Shader &shader, const std::string& UniformMaterial);
-    Mesh(std::vector<Vertex> vertices_arg, std::vector<unsigned  int> indices_arg, std::vector<std::shared_ptr<Texture>>& textures_arg){
+    Mesh(std::vector<Vertex> vertices_arg, std::vector<unsigned  int> indices_arg, std::vector<Texture>& textures_arg){
         vertices = vertices_arg;
         indices = indices_arg;
         textures = textures_arg;
@@ -31,6 +31,7 @@ private:
     unsigned int VAO, VBO, EBO;
     /// @brief help function to
     void setupMesh();
+  inline static std::string TextureTypeToString(TextureType type_arg);
 };
 
 

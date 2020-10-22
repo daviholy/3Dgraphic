@@ -7,9 +7,12 @@
 
 #include <string>
 
+enum class TextureType{
+    diffuse,specular
+};
 struct Texture {
     unsigned int id;
-    std::string type;
+    TextureType type;
     std::string name;
 };
 #endif //GLFWTEST_TEXTURE_H

@@ -14,7 +14,7 @@
 /// @brief class representing scene (representing the final drawing scene with defined cameras and objects)
 class Scene {
 public:
-    Scene(const Camera& camera_arg;
+    explicit Scene(const Camera& camera_arg);
     Scene(const std::vector<Camera>& cameras_arg, unsigned int activeCamera_arg);
     /// @brief draw all the objects in the scene
     void draw(const std::string& uniformMaterial_arg = "material.");
@@ -31,6 +31,9 @@ public:
             if (foundShaders.use_count())
         }
     }*/
+  Camera& getActiveCamera(){
+      return cameras_[activeCamera_];
+  }
 private:
 std::vector<Object> objects_;
 /// @brief integer, which sets the actual position in cameras_

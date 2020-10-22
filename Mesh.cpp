@@ -41,18 +41,19 @@ void Mesh::Draw(const Shader &shader, const std::string& UniformMaterial) {
 //using uniform naming conventions UniformMaterial.{type}{nr} nr= 0, 1, 2......
 unsigned int diffuseNr = 0;
 unsigned int specularNr =0;
+std::string number;
+TextureType type;
 //setting texture units---------------
 for (int i=0; i <textures.size();i++){
     //activate texture unit
     glActiveTexture(GL_TEXTURE0 + i);
-    std::string name = textures[i]->type;
-    std::string number;
-    if (name == "texture_diffuse")
+    type = textures[i].type;
+    if (type == TextureType::diffuse)
         number = std::to_string(diffuseNr++);
     else
         number = std::to_string(specularNr++);
-    shader.setFloat (UniformMaterial + name + number, i);
-    glBindTexture(GL_TEXTURE_2D, textures[i]->id);
+    shader.setFloat  (std::string((UniformMaterial + TextureTypeToString(type)).append(number)), i);
+    glBindTexture(GL_TEXTURE_2D, textures[i].id);
 }
 //--------------------------------------
 
@@ -62,6 +63,15 @@ glActiveTexture(GL_TEXTURE0);
 glBindVertexArray(VAO);
 glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, nullptr) ;
 glBindVertexArray(0);
+}
+
+ std::string Mesh::TextureTypeToString(TextureType type_arg) {
+    switch(type_arg){
+        case TextureType::diffuse:
+            return "texture_diffuse";
+        case TextureType::specular:
+            return "texture_specular";
+    }
 }
 
 

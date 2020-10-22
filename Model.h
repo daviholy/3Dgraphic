@@ -15,20 +15,21 @@ constexpr char delimiter = '/';
 class Model {
 public:
     Model()=default;
-    Model(std::string path);
+    explicit Model(const std::string& path);
     void Draw(const Shader &shader, const std::string &UniformMaterial){
-        for (Mesh mesh : meshes_)
+        for (Mesh &mesh : meshes_)
             mesh.Draw(shader, UniformMaterial);
     }
 private:
-    std::vector<std::shared_ptr<Texture>>textures_loaded_;
-    /// @brief convert the Assimp mesh to Mesh
-      Mesh convert(aiMesh *mesh_arg, const aiScene *scene);
-      /// @brief stored loaded textures for the model
-    std::vector<std::shared_ptr<Texture>> loadMaterialTextures(aiMaterial *mat, aiTextureType type, const std::string& typeName);
+    std::vector<Texture>textures_loaded_;
     std::vector<Mesh> meshes_;
     /// @brief name of the object
     std::string directory_;
+
+    /// @brief convert the Assimp mesh to Mesh
+      Mesh convert(aiMesh *mesh_arg, const aiScene *scene);
+      /// @brief stored loaded textures for the model
+    std::vector<Texture> loadMaterialTextures(aiMaterial *mat, aiTextureType type, const std::string& typeName, TextureType type_arg);
 
     void processNode( aiNode *node, const aiScene *scene);
 };

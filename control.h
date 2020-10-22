@@ -5,11 +5,13 @@
 #ifndef GLFWTEST_CONTROL_H
 #define GLFWTEST_CONTROL_H
 
+#include "Object.h"
+
 class CameraCommand{
 public:
     CameraCommand(const CameraMovement movement_arg, const int key_arg);
-    void execute( GLFWwindow *window,const float deltaTime_arg, const std::shared_ptr<Camera> &activeCamera_arg);
-    const int getKey();
+    void execute( GLFWwindow *window,const float deltaTime_arg, Camera &activeCamera_arg);
+    int getKey() const;
 private:
     CameraMovement movement_;
     int key_;
@@ -18,7 +20,7 @@ private:
 class Command{
 public:
     Command(const int key_arg,void (*executiveFunction_arg ) (GLFWwindow *window));
-    const int getKey();
+    int getKey() const;
     void execute(GLFWwindow *window);
 private:
     void (*executiveFunction_ ) (GLFWwindow *window);
@@ -28,12 +30,10 @@ private:
 
 class Control{
 public:
-     std::shared_ptr<Camera> activeCamera;
+     Camera *activeCamera;
     std::vector<CameraCommand> cameraCommands;
     std::vector<Command> commands;
-    explicit Control (std::shared_ptr<Camera> activeCamera_arg);
+    explicit Control (Camera &activeCamera_arg);
     void update(GLFWwindow *window,float deltaTime_arg);
-private:
-    Control()= default;
 };
 #endif //GLFWTEST_CONTROL_H

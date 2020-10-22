@@ -5,8 +5,10 @@
 #include "Scene.h"
 
 void Scene::draw(const std::string &uniformMaterial_arg) {
+    //TODO: drawing all objects in the scene, try to cull some
+    glm::mat4 view = cameras_[activeCamera_].GetViewMatrix();
     for (Object &object: objects_)
-        object.draw(uniformMaterial_arg, cameras_[activeCamera_].GetViewMatrix(), projection);
+        object.draw(uniformMaterial_arg, view, projection);
 }
 
 Scene::Scene(const Camera &camera_arg) : projection(

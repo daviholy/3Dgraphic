@@ -38,7 +38,7 @@ float deltaTime = 0.0;
 float deqree = 0;
 bool RawInput = false;
 glm::vec3 lightPos = glm::vec3(1.2, 0, 2.0);
-std::shared_ptr<Camera> activeCamera ;
+Camera *activeCamera ;
 #ifdef DEBUG
 //debug message function for opengl
 void APIENTRY glDebugOutput(GLenum source,GLenum type,unsigned int id,GLenum severity,GLsizei length,const char*message,const void*userParam) {
@@ -124,9 +124,9 @@ void drawCubeLights(Scene &scene_arg, Shader &shader) {
     //---------------------------------------------
     shader.use();
    // shader.setVec3("pointLight.position", lightPos.x, lightPos.y, lightPos.z);
-    shader.setVec3("spotLight.direction", scene_arg.activeCamera->Front.x, scene_arg.activeCamera->Front.y, scene_arg.activeCamera->Front.z);
-    shader.setVec3("spotLight.position", scene_arg.activeCamera->Position.x, scene_arg.activeCamera->Position.y, scene_arg.activeCamera->Position.z);
-    shader.setVec3("viewPos", scene_arg.activeCamera->Position.x, scene_arg.activeCamera->Position.y, scene_arg.activeCamera->Position.z);
+    shader.setVec3("spotLight.direction", scene_arg.getActiveCamera().Front.x, scene_arg.getActiveCamera().Front.y, scene_arg.getActiveCamera().Front.z);
+    shader.setVec3("spotLight.position", scene_arg.getActiveCamera().Position.x, scene_arg.getActiveCamera().Position.y, scene_arg.getActiveCamera().Position.z);
+    shader.setVec3("viewPos", scene_arg.getActiveCamera().Position.x, scene_arg.getActiveCamera().Position.y, scene_arg.getActiveCamera().Position.z);
     model = glm::scale(model,glm::vec3(1.0,1.0,1.0));
     scene_arg.draw();
     // render lamp
@@ -240,11 +240,11 @@ int main() {
     ImGui_ImplOpenGL3_Init();
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
-    std::shared_ptr<Shader> modelShader;
+    Shader modelShader;
     //compile shaders -----------------------------
     try {
        // LampShader = Shader("shaders/textureVertex3D.shader", "shaders/lightingLamp.shader");
-        modelShader = std::make_shared<Shader>("shaders/modelVertex.shader","shaders/modelFragment.shader" );
+        modelShader = Shader("shaders/modelVertex.shader","shaders/modelFragment.shader" );
     }
     catch (std::ifstream::failure &fail) {
         std::cout << fail.what() << std::endl;
@@ -253,10 +253,10 @@ int main() {
     }
     //-----------------------------------------------------------------------------------
     //setting camera
-    std::shared_ptr<Camera> camera = std::make_shared<Camera>(-90, -36, glm::vec3(0.0, 4.0, 3.5));
-    activeCamera = camera;
+    Scene scene (Camera(-90, -36, glm::vec3(0.0, 4.0, 3.5)));
+    activeCamera = &scene.getActiveCamera();
     //settings controls---------------------------
-    Control control(activeCamera);
+    Control control(scene.getActiveCamera());
     control.cameraCommands.emplace_back(CameraCommand(Forward,GLFW_KEY_W));
     control.cameraCommands.emplace_back(CameraCommand(Left,GLFW_KEY_A));
     control.cameraCommands.emplace_back(CameraCommand(Backward,GLFW_KEY_S));
@@ -266,12 +266,12 @@ int main() {
     glfwSetKeyCallback(window,setKeyCallback);
     //---------------------------------------------
     //loading objects
-   std::shared_ptr<Object> object = std::make_shared<Object>("models/survival Backpack/backpack.obj", modelShader);
     //lamp = Model ("models/sphere.obj");
     //loading scene with single object
-    Scene scene (camera, control);
-    scene.addObject(object);
-    //scene.addObject(std::make_shared<Object>(object->model,modelShader,glm::vec3 (4 * i,0.0f,0.0f)));
+    std::shared_ptr<Model> model = std::make_shared<Model>(Model ("models/survival Backpack/backpack.obj"));
+    for (int i =0 ; i <100 ;i++)
+    //scene.addObject(Object("models/survival Backpack/backpack.obj", modelShader));
+    scene.addObject(Object(model,modelShader,glm::vec3 (4 * i,0.0f,0.0f)));
     //glfw: set the limiter of FPS to the refresh rate of monitor ( v-sinc)
     glfwSwapInterval(1);
     //enable Z Buffer
@@ -294,7 +294,6 @@ int main() {
         }
         // in engine input
         // -----
-        if (settings::hideGui)
         control.update(window, deltaTime);
 
         // set the background color and clear the buffer with it
@@ -305,18 +304,17 @@ int main() {
         //-----------------------------------------
         if (settings::changedUniform) {
             settings::changedUniform = false;
-            setUniforms(*modelShader);
+            setUniforms(modelShader);
         }
 
         //draw the scene
         //--------------
-        draw(scene, *modelShader);
+        draw(scene, modelShader);
 
         //draw the GUI
         //------------------
-        if (!settings::hideGui) {
+        if (!settings::hideGui)
             settings::drawMenu();
-        }
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved ...)
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
