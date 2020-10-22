@@ -6,6 +6,7 @@
 #define GLFWTEST_MESH_H
 
 
+#include <utility>
 #include <vector>
 #include "Vertex.h"
 #include "Texture.h"
@@ -19,19 +20,21 @@ public:
     /// @brief convert from aiMesh (Assimp structure) to our mesh Structure
     /// @param shader shader to use
     /// @param UniformMaterial basic name of texture uniforms (used convention UniformMaterial + name + number)
-    void Draw(const Shader &shader, const std::string& UniformMaterial);
-    Mesh(std::vector<Vertex> vertices_arg, std::vector<unsigned  int> indices_arg, std::vector<Texture>& textures_arg){
-        vertices = vertices_arg;
-        indices = indices_arg;
+    void Draw(const Shader &shader);
+    Mesh(std::vector<Vertex> vertices_arg, std::vector<unsigned  int> indices_arg, std::vector<Texture>& textures_arg, std::vector<std::string> &uniforms):
+    uniforms(std::move(uniforms)){
+        vertices = std::move(vertices_arg);
+        indices = std::move(indices_arg);
         textures = textures_arg;
         setupMesh();
     }
 private:
+     std::vector<std::string> uniforms;
+
     /// @brief render data in GPU
     unsigned int VAO, VBO, EBO;
     /// @brief help function to
     void setupMesh();
-  inline static std::string TextureTypeToString(TextureType type_arg);
 };
 
 

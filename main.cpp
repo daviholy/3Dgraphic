@@ -268,7 +268,7 @@ int main() {
     //loading objects
     //lamp = Model ("models/sphere.obj");
     //loading scene with single object
-    std::shared_ptr<Model> model = std::make_shared<Model>(Model ("models/survival Backpack/backpack.obj"));
+    std::shared_ptr<Model> model = std::make_shared<Model>(Model ("models/survival Backpack/backpack.obj","material."));
     for (int i =0 ; i <100 ;i++)
     //scene.addObject(Object("models/survival Backpack/backpack.obj", modelShader));
     scene.addObject(Object(model,modelShader,glm::vec3 (4 * i,0.0f,0.0f)));

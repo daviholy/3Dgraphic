@@ -43,5 +43,5 @@ void Object::draw(const std::string &uniformMaterial, const glm::mat4 & viewMatr
     shader.setMatrix("model",glm::value_ptr(modelMatrix_));
     shader.setMatrix("view",glm::value_ptr(viewMatrix_arg));
     shader.setMatrix("projection",glm::value_ptr(projectionMatrix_arg));
-    model->Draw(shader,uniformMaterial);
+    model->Draw(shader);
 }

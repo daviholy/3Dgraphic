@@ -15,9 +15,9 @@ public:
     Object(std::shared_ptr<Model> model_arg, const Shader &shader_arg, const glm::vec3 position_arg = glm::vec3 (0.0f,0.0f,0.0f),
            const glm::vec3 size_arg = glm::vec3(1.0f));
 
-     Object(const std::string &path_arg, Shader &shader_arg, const glm::vec3 position_arg = glm::vec3 (0.0f,0.0f,0.0f),
+     Object(const std::string &path_arg, const std::string &uniformmaterial_arg, Shader &shader_arg, const glm::vec3 position_arg = glm::vec3 (0.0f,0.0f,0.0f),
             const glm::vec3 size_arg = glm::vec3(1.0f)) :
-             Object(std::make_shared<Model>(Model(path_arg)),shader_arg,position_arg, size_arg){};
+             Object(std::make_shared<Model>(Model(path_arg, uniformmaterial_arg)),shader_arg,position_arg, size_arg){};
 
     void draw(const std::string &uniformMaterial, const glm::mat4 & viewMatrix_arg, const glm::mat4 & projectionMatrix_arg );
 

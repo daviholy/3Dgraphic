@@ -5,6 +5,7 @@
 #include <iostream>
 #include <assimp/scene.h>
 #include "Mesh.h"
+#include<charconv>
 
  void Mesh::setupMesh() {
 //make the VAO, EBO buffers----------
@@ -37,22 +38,13 @@ glVertexAttribPointer(2,2, GL_FLOAT, GL_FALSE, sizeof(Vertex),(void*)offsetof(Ve
 
 glBindVertexArray(0);
 }
-void Mesh::Draw(const Shader &shader, const std::string& UniformMaterial) {
+void Mesh::Draw(const Shader &shader) {
 //using uniform naming conventions UniformMaterial.{type}{nr} nr= 0, 1, 2......
-unsigned int diffuseNr = 0;
-unsigned int specularNr =0;
-std::string number;
-TextureType type;
 //setting texture units---------------
 for (int i=0; i <textures.size();i++){
     //activate texture unit
     glActiveTexture(GL_TEXTURE0 + i);
-    type = textures[i].type;
-    if (type == TextureType::diffuse)
-        number = std::to_string(diffuseNr++);
-    else
-        number = std::to_string(specularNr++);
-    shader.setFloat  (std::string((UniformMaterial + TextureTypeToString(type)).append(number)), i);
+    shader.setFloat  (uniforms[i], i);
     glBindTexture(GL_TEXTURE_2D, textures[i].id);
 }
 //--------------------------------------
@@ -63,15 +55,6 @@ glActiveTexture(GL_TEXTURE0);
 glBindVertexArray(VAO);
 glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, nullptr) ;
 glBindVertexArray(0);
-}
-
- std::string Mesh::TextureTypeToString(TextureType type_arg) {
-    switch(type_arg){
-        case TextureType::diffuse:
-            return "texture_diffuse";
-        case TextureType::specular:
-            return "texture_specular";
-    }
 }
 
 

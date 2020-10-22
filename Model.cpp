@@ -7,9 +7,9 @@
 #include <assimp/postprocess.h>
 #include "Model.h"
 #include "TextureBuilder.h"
-Model::Model(const std::string& path) {
+Model::Model(const std::string& path, const std::string &uniformMaterial_arg) {
     Assimp::Importer importer;
-    const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate );
+    const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices);
     if (!scene || scene ->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode){
         std::cout << "ERROR::ASSIMP::" << importer.GetErrorString() <<std::endl;
     }
@@ -24,23 +24,23 @@ Model::Model(const std::string& path) {
     std::cout << "total count of vertices: " << total << std::endl;
 #endif
 
-    processNode(scene->mRootNode, scene);
+    processNode(scene->mRootNode, scene, uniformMaterial_arg);
 }
 
-void Model::processNode(aiNode *node,  const aiScene *scene) {
+void Model::processNode(aiNode *node,  const aiScene *scene, const std::string &uniformMaterial_arg) {
     //process all meshes of curent node
 
     for (unsigned int i=0 ; i <node->mNumMeshes;i++ ){
         aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
-        meshes_.push_back(convert(mesh, scene));
+        meshes_.push_back(convert(mesh, scene, uniformMaterial_arg));
     }
 
     //procces all other children nodes
     for (unsigned int i = 0; i < node->mNumChildren;i++)
-        processNode(node->mChildren[i],scene);
+        processNode(node->mChildren[i],scene, uniformMaterial_arg);
 }
 
-Mesh Model::convert(aiMesh *mesh_arg,  const aiScene *scene) {
+Mesh Model::convert(aiMesh *mesh_arg,  const aiScene *scene, const std::string &uniformMaterial_arg) {
     //convert vertices-------------------
     bool texture = mesh_arg->mTextureCoords[0];
     std::vector<Vertex> vertices;
@@ -69,19 +69,24 @@ Mesh Model::convert(aiMesh *mesh_arg,  const aiScene *scene) {
     //convert textures-------------------
     //TODO: just implemented diffuse and specular textures
     std::vector<Texture> textures;
+    std::vector<std::string> uniforms;
     if (mesh_arg->mMaterialIndex){
         aiMaterial *material = scene->mMaterials[mesh_arg->mMaterialIndex];
-        std::vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, "texture_diffuse",TextureType::diffuse);
-        std::vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular",TextureType::specular);
+        std::vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, TextureType::diffuse);
+        for (int i =0 ; i < diffuseMaps.size();i++)
+            uniforms.push_back((uniformMaterial_arg + "texture_diffuse").append(std::to_string(i)));
+        std::vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, TextureType::specular);
+        for (int i =0 ; i < specularMaps.size();i++)
+            uniforms.push_back((uniformMaterial_arg + "texture_specular").append(std::to_string(i)));
         textures = diffuseMaps;
         //TODO:copying vector to other vector which is O(n)!!!! (it dont have much big impact now, because the number of actual Textures are low)
         textures.insert(textures.end(),specularMaps.begin(),specularMaps.end());
     }
     //------------------------------------
-    return Mesh(vertices,indices,textures);
+    return Mesh(vertices,indices,textures,uniforms);
 }
 //TODO: checking loaded textures in model, possible duplicate in another model
-std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, const std::string& typeName, const TextureType type_arg) {
+std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, const TextureType type_arg) {
     std::vector<Texture> textures;
     TextureBuilder texturebuilder("");
     texturebuilder.SetFiltering(GL_LINEAR,GL_NEAREST);
