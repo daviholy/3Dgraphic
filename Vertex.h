@@ -13,5 +13,7 @@ struct Vertex {
     glm::vec3 Position;
     glm::vec3 Normal;
     glm::vec2 TexCoords;
+    glm::vec3 tangent;
+    glm::vec3 bitangent;
 };
 #endif //GLFWTEST_VERTEX_H

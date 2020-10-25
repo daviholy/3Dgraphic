@@ -15,7 +15,6 @@ private:
     GLuint MaxFiltering_ = GL_NEAREST_MIPMAP_NEAREST;
     GLuint Target_ = GL_TEXTURE_2D;
     GLuint internalColorMode_ = GL_RGB;
-    GLuint ColorMode_ = GL_RGB;
     std::string Source_;
 public:
   TextureBuilder (const std::string& source);

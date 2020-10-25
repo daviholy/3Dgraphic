@@ -8,7 +8,7 @@
 #include <string>
 
 enum class TextureType{
-    diffuse =0,specular =1
+    diffuse =0,specular =1,normal=2
 };
 struct Texture {
     unsigned int id;

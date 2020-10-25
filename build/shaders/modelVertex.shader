@@ -10,6 +10,7 @@ uniform mat4 projection;
 out vec3 normal;
 out vec3 fragWorldPosition;
 out vec2 TexCoord;
+
 void main(){
     gl_Position = projection * view * model * vec4(aPos,1.0);
     fragWorldPosition = vec3(model * vec4(aPos,1.0));

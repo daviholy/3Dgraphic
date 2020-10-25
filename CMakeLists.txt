@@ -2,8 +2,6 @@ cmake_minimum_required(VERSION 3.14)
 set(CMAKE_CXX_STANDARD 17)
 project(glfwTest)
 set(prefix "")
-#debug macro remove if you want to make release
-add_compile_definitions(DEBUG)
 if(${CMAKE_HOST_UNIX})
     set(prefix ".a")
     add_compile_definitions(_UNIX)
@@ -16,6 +14,7 @@ find_library(GLFW_LIBRARY
         NAMES "glfw3${prefix}"
         PATHS  dependencies)
 if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+add_compile_definitions(DEBUG)
 find_library(ASSIMP
         NAMES "assimpd${prefix}"
         PATHS dependencies)

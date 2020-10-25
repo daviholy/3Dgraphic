@@ -15,11 +15,11 @@
 ########################
 
 //Path to a library.
-ASSIMP:FILEPATH=C:/Users/davih/CLionProjects/3Dgraphic/dependencies/assimp.lib
+ASSIMP:FILEPATH=C:/Users/davih/CLionProjects/3Dgraphic/dependencies/assimpd.lib
 
 //Choose the type of build, options are: None Debug Release RelWithDebInfo
 // MinSizeRel ...
-CMAKE_BUILD_TYPE:STRING=Release
+CMAKE_BUILD_TYPE:STRING=Debug
 
 //Id string of the compiler for the CodeBlocks IDE. Automatically
 // detected when left empty

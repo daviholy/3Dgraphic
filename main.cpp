@@ -2,6 +2,7 @@
 // Created by davih on 27.04.2020.
 //
 /*todo: things to add:
+ * save the scene
  *semi transparent objects
  * animation system
  * multiple lamps
@@ -268,10 +269,10 @@ int main() {
     //loading objects
     //lamp = Model ("models/sphere.obj");
     //loading scene with single object
-    std::shared_ptr<Model> model = std::make_shared<Model>(Model ("models/survival Backpack/backpack.obj","material."));
-    for (int i =0 ; i <100 ;i++)
+    //std::shared_ptr<Model> model = std::make_shared<Model>(Model ("models/survival Backpack/backpack.obj","material."));
+    std::shared_ptr<Model> model = std::make_shared<Model>(Model ("models/building/building.obj","material."));
     //scene.addObject(Object("models/survival Backpack/backpack.obj", modelShader));
-    scene.addObject(Object(model,modelShader,glm::vec3 (4 * i,0.0f,0.0f)));
+    scene.addObject(Object(model,modelShader,glm::vec3(0),glm::vec3(8)));
     //glfw: set the limiter of FPS to the refresh rate of monitor ( v-sinc)
     glfwSwapInterval(1);
     //enable Z Buffer
