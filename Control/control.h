@@ -5,7 +5,7 @@
 #ifndef GLFWTEST_CONTROL_H
 #define GLFWTEST_CONTROL_H
 
-#include "Object.h"
+#include "../Scene/Object.h"
 
 class CameraCommand{
 public:

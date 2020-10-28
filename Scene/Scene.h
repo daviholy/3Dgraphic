@@ -8,9 +8,9 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 #include "Object.h"
-#include "Camera.h"
-#include "settings.h"
-#include "control.h"
+#include "../Control/Camera.h"
+#include "../menu/settings.h"
+#include "../Control/control.h"
 /// @brief class representing scene (representing the final drawing scene with defined cameras and objects)
 class Scene {
 public:

@@ -19,9 +19,9 @@
 #include <iostream>
 #include <glm/gtc/matrix_transform.hpp>
 #include <fstream>
-#include "settings.h"
-#include "Shader.h"
-#include "Scene.h"
+#include "menu/settings.h"
+#include "GL/Shader.h"
+#include "Scene/Scene.h"
 
 void (*draw) (Scene& scene, Shader &shader) ;
 
@@ -123,12 +123,11 @@ void drawCubeLights(Scene &scene_arg, Shader &shader) {
     glm::mat4 model(1.0f), projection = glm::perspective(glm::radians(settings::FOV), (float) settings::scrWidth / settings::scrHeight, 0.1f, 100.0f);
     //setting the current positions to the uniforms
     //---------------------------------------------
-    shader.use();
    // shader.setVec3("pointLight.position", lightPos.x, lightPos.y, lightPos.z);
+   shader.use();
     shader.setVec3("spotLight.direction", scene_arg.getActiveCamera().Front.x, scene_arg.getActiveCamera().Front.y, scene_arg.getActiveCamera().Front.z);
     shader.setVec3("spotLight.position", scene_arg.getActiveCamera().Position.x, scene_arg.getActiveCamera().Position.y, scene_arg.getActiveCamera().Position.z);
     shader.setVec3("viewPos", scene_arg.getActiveCamera().Position.x, scene_arg.getActiveCamera().Position.y, scene_arg.getActiveCamera().Position.z);
-    model = glm::scale(model,glm::vec3(1.0,1.0,1.0));
     scene_arg.draw();
     // render lamp
     //-----------------
@@ -241,10 +240,10 @@ int main() {
     ImGui_ImplOpenGL3_Init();
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
-    Shader modelShader;
+    Shader modelShader, LampShader;
     //compile shaders -----------------------------
     try {
-       // LampShader = Shader("shaders/textureVertex3D.shader", "shaders/lightingLamp.shader");
+        LampShader = Shader("shaders/textureVertex3D.shader", "shaders/lightingLamp.shader");
         modelShader = Shader("shaders/modelVertex.shader","shaders/modelFragment.shader" );
     }
     catch (std::ifstream::failure &fail) {
@@ -252,6 +251,12 @@ int main() {
         glfwTerminate();
         return -1;
     }
+    //TODO:make more dynamic system for shaders
+   // LampShader.use();
+    //LampShader.setVec3("lightColor",1,1,1);
+    modelShader.use();
+    //modelShader.setVec3("pointLight.position",0,8,-4);
+    modelShader.setVec3("dirLight.dir",0,16,-20);
     //-----------------------------------------------------------------------------------
     //setting camera
     Scene scene (Camera(-90, -36, glm::vec3(0.0, 4.0, 3.5)));
@@ -269,10 +274,8 @@ int main() {
     //loading objects
     //lamp = Model ("models/sphere.obj");
     //loading scene with single object
-    //std::shared_ptr<Model> model = std::make_shared<Model>(Model ("models/survival Backpack/backpack.obj","material."));
-    std::shared_ptr<Model> model = std::make_shared<Model>(Model ("models/building/building.obj","material."));
-    //scene.addObject(Object("models/survival Backpack/backpack.obj", modelShader));
-    scene.addObject(Object(model,modelShader,glm::vec3(0),glm::vec3(8)));
+    std::shared_ptr<Model> model = std::make_shared<Model>(Model ("models/building/wall.obj","material."));
+    scene.addObject(Object(model,modelShader,glm::vec3(0),glm::vec3(4)));
     //glfw: set the limiter of FPS to the refresh rate of monitor ( v-sinc)
     glfwSwapInterval(1);
     //enable Z Buffer

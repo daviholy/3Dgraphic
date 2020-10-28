@@ -4,7 +4,7 @@
 
 #include <glm/ext/matrix_transform.hpp>
 #include "Camera.h"
-#include "settings.h"
+#include "../menu/settings.h"
 
 Camera::Camera(const float yaw, const float pitch, const glm::vec3 position, const glm::vec3 up, Object *object_arg) {
     Yaw = yaw;

@@ -2,12 +2,12 @@
 // Created by davih on 22.04.2020.
 //
 
-#ifndef GLFWTEST_TEXTUREBUILDER_H
-#define GLFWTEST_TEXTUREBUILDER_H
+#ifndef GLFWTEST_TEXTUREGENERATOR_H
+#define GLFWTEST_TEXTUREGENERATOR_H
 #include <string>
 #include <glad/glad.h>
 
-class TextureBuilder {
+class TextureGenerator {
 private:
     bool _Yflip=false;
     GLuint Repeat_ = GL_REPEAT;
@@ -17,7 +17,7 @@ private:
     GLuint internalColorMode_ = GL_RGB;
     std::string Source_;
 public:
-  TextureBuilder (const std::string& source);
+  TextureGenerator (const std::string& source);
   void SetYflip(const bool value);
  void SetSource(const std::string& source);
  void SetRepeat(const int Repeat);
@@ -29,4 +29,4 @@ public:
 };
 
 
-#endif //GLFWTEST_TEXTUREBUILDER_H
+#endif //GLFWTEST_TEXTUREGENERATOR_H

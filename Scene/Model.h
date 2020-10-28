@@ -7,7 +7,7 @@
 
 #include <assimp/scene.h>
 #include <memory>
-#include "Shader.h"
+#include "../GL/Shader.h"
 #include "Mesh.h"
 
 constexpr char delimiter = '/';

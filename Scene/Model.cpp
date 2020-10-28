@@ -6,7 +6,7 @@
 #include <iostream>
 #include <assimp/postprocess.h>
 #include "Model.h"
-#include "TextureBuilder.h"
+#include "../GL/TextureGenerator.h"
 Model::Model(const std::string& path, const std::string &uniformMaterial_arg) {
     Assimp::Importer importer;
     const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_CalcTangentSpace);
@@ -35,7 +35,7 @@ void Model::processNode(aiNode *node,  const aiScene *scene, const std::string &
         meshes_.push_back(convert(mesh, scene, uniformMaterial_arg));
     }
 
-    //procces all other children nodes
+    //procces all other children nodesK
     for (unsigned int i = 0; i < node->mNumChildren;i++)
         processNode(node->mChildren[i],scene, uniformMaterial_arg);
 }
@@ -75,21 +75,29 @@ Mesh Model::convert(aiMesh *mesh_arg,  const aiScene *scene, const std::string &
     //convert textures-------------------
     //TODO: just implemented diffuse,specular and normals textures
     std::vector<Texture> textures;
+    //TODO: just simple reserving, try to gues more precisely?
+    textures.reserve(3);
+
+
+
+
     std::vector<std::string> uniforms;
     if (mesh_arg->mMaterialIndex){
         aiMaterial *material = scene->mMaterials[mesh_arg->mMaterialIndex];
-        std::vector<Texture> diffuseMaps = loadMaterialTextures(material, aiTextureType_DIFFUSE, TextureType::diffuse);
-        for (unsigned int i =0 ; i < diffuseMaps.size();i++)
+        textures = loadMaterialTextures(material, aiTextureType_DIFFUSE, TextureType::diffuse);
+        for (unsigned int i =0 ; i < textures.size();i++)
             uniforms.push_back((uniformMaterial_arg + "texture_diffuse").append(std::to_string(i)));
+
         std::vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, TextureType::specular);
         for (unsigned int i =0 ; i < specularMaps.size();i++)
             uniforms.push_back((uniformMaterial_arg + "texture_specular").append(std::to_string(i)));
-        textures = diffuseMaps;
+        //FIXME: assimp loads normals maps tagged as map_Kn
         std::vector<Texture> normalMaps = loadMaterialTextures(material, aiTextureType_NORMALS, TextureType::normal);
         for (unsigned int i =0 ; i < normalMaps.size();i++)
             uniforms.push_back(((uniformMaterial_arg + "texture_normal").append(std::to_string(i))));
         //TODO:copying vector to other vector which is O(n)!!!! (it dont have much big impact now, because the number of actual Textures are low)
         textures.insert(textures.end(),specularMaps.begin(),specularMaps.end());
+        textures.insert(textures.end(),normalMaps.begin(),normalMaps.end());
     }
     //------------------------------------
 
@@ -98,7 +106,7 @@ Mesh Model::convert(aiMesh *mesh_arg,  const aiScene *scene, const std::string &
 //TODO: checking loaded textures in model, possible duplicate in another model
 std::vector<Texture> Model::loadMaterialTextures(aiMaterial *mat, aiTextureType type, const TextureType type_arg) {
     std::vector<Texture> textures;
-    TextureBuilder texturebuilder("");
+    TextureGenerator texturebuilder("");
     texturebuilder.SetFiltering(GL_LINEAR,GL_NEAREST);
     for (unsigned int i = 0; i < mat->GetTextureCount(type); i++) {
         aiString str;

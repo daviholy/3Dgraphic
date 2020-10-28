@@ -3,26 +3,26 @@
 //
 
 #include <iostream>
-#include "TextureBuilder.h"
+#include "TextureGenerator.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
-TextureBuilder::TextureBuilder(const std::string& Source){
+TextureGenerator::TextureGenerator(const std::string& Source){
     Source_ = Source;
 }
-void TextureBuilder::SetFiltering(const GLuint MaxFiltering, const GLuint MinFiltering) {
+void TextureGenerator::SetFiltering(const GLuint MaxFiltering, const GLuint MinFiltering) {
     MaxFiltering_ = MaxFiltering;
     MinFiltering_ = MinFiltering;
 }
-void TextureBuilder::SetSource(const std::string& source) {
+void TextureGenerator::SetSource(const std::string& source) {
     Source_ = source;
 }
-void TextureBuilder::SetRepeat(const int Repeat) {
+void TextureGenerator::SetRepeat(const int Repeat) {
     Repeat_ = Repeat;
 }
-void TextureBuilder::SetInternalColorMode(GLuint ColorMode) {
+void TextureGenerator::SetInternalColorMode(GLuint ColorMode) {
     internalColorMode_ = ColorMode;
 }
-void TextureBuilder::Reset() {
+void TextureGenerator::Reset() {
     Source_ = nullptr;
     Repeat_ = GL_REPEAT;
     MinFiltering_ = GL_LINEAR;
@@ -30,12 +30,12 @@ void TextureBuilder::Reset() {
     Target_ = GL_TEXTURE_2D;
     internalColorMode_ = GL_RGB;
 }
-void TextureBuilder::SetYflip(const bool value) {
+void TextureGenerator::SetYflip(const bool value) {
     _Yflip = value;
 }
 //TODO:: delete the image from memory after sending it to GPU, implement some memory buffer
-GLuint TextureBuilder::Build() {
-    int StbiToGl[]{0,0,0,GL_RGB,GL_RGBA};
+GLuint TextureGenerator::Build() {
+   static int StbiToGl[]{0,0,0,GL_RGB,GL_RGBA};
     if (Source_.empty())
         throw std::logic_error ("Didn't specified source");
     stbi_set_flip_vertically_on_load(_Yflip);

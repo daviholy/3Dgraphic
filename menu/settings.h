@@ -105,7 +105,7 @@ private:
         //draw intensity properties
         for (int i = 0; i < 4; i++) {
             ImGui::PushID(IDnum++);
-            if (ImGui::SliderFloat(name[i], &light.intensities[i], 0, 1))
+            if (ImGui::SliderFloat(name[i], &light.intensities[i], 0, 10))
                 changedUniform = true;
             ImGui::PopID();
         }

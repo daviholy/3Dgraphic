@@ -37,6 +37,6 @@ set (ImGui
         dependencies/imgui/imgui_impl_glfw.cpp
         dependencies/imgui/imgui_impl_opengl3.cpp
         dependencies/imgui/imgui_widgets.cpp )
-add_executable(3D main.cpp Shader.cpp TextureBuilder.cpp Camera.cpp ${glad} ${ImGui}  Mesh.cpp Model.cpp control.cpp Object.cpp Scene.cpp control.cpp)
+add_executable(3D main.cpp GL/Shader.cpp GL/TextureGenerator.cpp Control/Camera.cpp ${glad} ${ImGui} Scene/Mesh.cpp Scene/Model.cpp Control/control.cpp Scene/Object.cpp Scene/Scene.cpp Control/control.cpp)
 target_link_options(3D PRIVATE -ldl -pthread)
 target_link_libraries(3D ${GLFW_LIBRARY} ${ZLIB} ${XML} ${ASSIMP})

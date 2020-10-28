@@ -6,7 +6,7 @@
 #define GLFWTEST_CAMERA_H
 
 #include <glm/glm.hpp>
-#include "Object.h"
+#include "../Scene/Object.h"
 
 enum CameraMovement {
     Forward,

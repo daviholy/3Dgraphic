@@ -40,6 +40,7 @@ Object::Object(const std::shared_ptr<Model> model_arg, const Shader &shader_arg,
 }
 
 void Object::draw(const std::string &uniformMaterial, const glm::mat4 & viewMatrix_arg, const glm::mat4& projectionMatrix_arg) {
+    shader.use();
     shader.setMatrix("model",glm::value_ptr(modelMatrix_));
     shader.setMatrix("view",glm::value_ptr(viewMatrix_arg));
     shader.setMatrix("projection",glm::value_ptr(projectionMatrix_arg));
