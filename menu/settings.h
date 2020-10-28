@@ -191,8 +191,12 @@ public:
         // feed inputs to dear imgui, start new frame
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
+
+        ImGuiIO& io = ImGui::GetIO();
+        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
         ImGui::NewFrame();
-        ImGui::ShowDemoWindow(&RawInput);
+        ImGui::DockSpaceOverViewport(ImGui::GetMainViewport(), ImGuiDockNodeFlags_PassthruCentralNode);
+        ImGui::ShowDemoWindow();
         //====================
         // render GUI
         //====================
