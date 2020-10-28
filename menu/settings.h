@@ -13,6 +13,7 @@
 #include <GLFW/glfw3.h>
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
+#include "../common.h"
 
 class settings {
 private:
@@ -182,7 +183,6 @@ private:
     }
 
 public:
-
 /*================================================
  * ==== static function for drawing the menu======
  * ===============================================
@@ -192,12 +192,13 @@ public:
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
+        ImGui::ShowDemoWindow(&RawInput);
         //====================
         // render GUI
         //====================
         //checkboxes
         //--------------------
-        ImGui::Begin("settings");
+       ImGui::Begin("settings");
         if (ImGui::Checkbox("lamp light", &setPointLight))
             changedUniform = true;
         ImGui::SameLine();

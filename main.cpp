@@ -22,7 +22,7 @@
 #include "menu/settings.h"
 #include "GL/Shader.h"
 #include "Scene/Scene.h"
-
+#include "common.h"
 void (*draw) (Scene& scene, Shader &shader) ;
 
 void mouse_callback(GLFWwindow *window, double xPos, double yPos);
@@ -35,11 +35,7 @@ void inline setKeyCallback(GLFWwindow* window, int key, int scancode, int action
 void drawCubeLights(Scene &scene, Shader &shader);
 //global variables used across functions
 //--------------------------------------
-float deltaTime = 0.0;
-float deqree = 0;
-bool RawInput = false;
-glm::vec3 lightPos = glm::vec3(1.2, 0, 2.0);
-Camera *activeCamera ;
+//glm::vec3 lightPos = glm::vec3(1.2, 0, 2.0);
 #ifdef DEBUG
 //debug message function for opengl
 void APIENTRY glDebugOutput(GLenum source,GLenum type,unsigned int id,GLenum severity,GLsizei length,const char*message,const void*userParam) {
@@ -284,6 +280,7 @@ int main() {
     // render loop
     // ---------------------------------------------------------------------------------------
     while (!glfwWindowShouldClose(window)) {
+
         // calculate time logic
         //--------------------
         double currentFrame = glfwGetTime();
@@ -291,11 +288,11 @@ int main() {
         lastFrame = currentFrame;
         //calculate position of the lamp
         //------------------------------
-        if (settings::movingLamp) {
+      /*  if (settings::movingLamp) {
             lightPos.x = settings::lightCenter[0] + cos(glfwGetTime() * settings::speed) * settings::radius;
             lightPos.y = settings::lightCenter[1];
             lightPos.z = settings::lightCenter[2] + sin(glfwGetTime() * settings::speed) * settings::radius;
-        }
+        }*/
         // in engine input
         // -----
         control.update(window, deltaTime);
@@ -332,6 +329,7 @@ int main() {
     // glfw: terminate, clearing all previously allocated GLFW resources.
     // ------------------------------------------------------------------
     glfwTerminate();
+
 }
 
 // callback function called  when the mouse position change

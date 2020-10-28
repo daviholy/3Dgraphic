@@ -12,7 +12,7 @@
 public:
     /// @brief default empty game object
     Object()=default;
-    Object(std::shared_ptr<Model> model_arg, const Shader &shader_arg, const glm::vec3 position_arg = glm::vec3 (0.0f,0.0f,0.0f),
+    Object(std::shared_ptr<Model> model_arg, const Shader &shader_arg, glm::vec3 position_arg = glm::vec3 (0.0f,0.0f,0.0f),
            const glm::vec3 size_arg = glm::vec3(1.0f));
 
      Object(const std::string &path_arg, const std::string &uniformmaterial_arg, Shader &shader_arg, const glm::vec3 position_arg = glm::vec3 (0.0f,0.0f,0.0f),
